@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
-import { GraduationCap, Eye, EyeOff, ArrowLeft, Check, X as XIcon } from 'lucide-react';
+import { GraduationCap, Eye, EyeOff, ArrowLeft, UserPlus, Check, X as XIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,7 +36,6 @@ export default function RegisterPage() {
   });
 
   const angkatanOptions = useMemo(() => getAngkatanOptions(), []);
-
   const passwordCheck = useMemo(() => validatePassword(formData.password), [formData.password]);
 
   const handleChange = (field) => (e) => {
@@ -116,60 +116,83 @@ export default function RegisterPage() {
     }
   };
 
+  const inputCls = "h-11 rounded-xl bg-[hsl(var(--ctp-surface0)/0.45)] border-[hsl(var(--ctp-overlay0)/0.35)] text-[hsl(var(--ctp-text))] placeholder:text-[hsl(var(--ctp-overlay1))] focus-visible:ring-[hsl(var(--ctp-lavender)/0.4)] focus-visible:border-[hsl(var(--ctp-lavender)/0.5)] transition-colors";
+  const errCls = "border-[hsl(var(--ctp-red)/0.5)] focus-visible:ring-[hsl(var(--ctp-red)/0.3)]";
+
   const PasswordReq = ({ met, text }) => (
-    <span className={`flex items-center gap-1 text-xs ${met ? 'text-green-600' : 'text-slate-400'}`}>
+    <span className={`flex items-center gap-1 text-xs transition-colors ${met ? 'text-[hsl(var(--ctp-green))]' : 'text-[hsl(var(--ctp-overlay1))]'}`}>
       {met ? <Check className="w-3 h-3" /> : <XIcon className="w-3 h-3" />}
       {text}
     </span>
   );
 
-  const FieldError = ({ msg }) => msg ? <p className="text-xs text-red-500">{msg}</p> : null;
+  const FieldError = ({ msg }) => msg ? <p className="text-xs text-[hsl(var(--ctp-red))]">{msg}</p> : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/5 flex items-center justify-center p-4">
-      <div className="absolute top-20 right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 left-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-[hsl(var(--ctp-crust))] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Soft ambient glows */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-32 right-0 h-[500px] w-[500px] rounded-full bg-[hsl(var(--ctp-mauve)/0.06)] blur-[120px]" />
+        <div className="absolute -bottom-40 -left-20 h-[600px] w-[600px] rounded-full bg-[hsl(var(--ctp-lavender)/0.05)] blur-[140px]" />
+        <div className="absolute top-1/3 left-1/4 h-[250px] w-[250px] rounded-full bg-[hsl(var(--ctp-teal)/0.04)] blur-[100px]" />
+      </div>
 
-      <div className="relative w-full max-w-lg">
-        <Link href="/" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-primary mb-6 transition-colors">
-          <ArrowLeft className="w-4 h-4" />
+      {/* Subtle grid */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(hsl(var(--ctp-text)) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="relative w-full max-w-lg z-10"
+      >
+        {/* Back link */}
+        <Link href="/" className="group inline-flex items-center gap-1.5 text-sm text-[hsl(var(--ctp-subtext0))] hover:text-[hsl(var(--ctp-lavender))] mb-6 transition-colors">
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
           Kembali ke Beranda
         </Link>
 
-        <Card className="shadow-xl border-slate-200/80">
-          <CardHeader className="text-center pb-2">
-            <div className="flex items-center justify-center w-14 h-14 bg-primary rounded-xl mx-auto mb-3">
-              <GraduationCap className="w-7 h-7 text-white" />
-            </div>
-            <CardTitle className="text-2xl font-bold">Daftar Akun Baru</CardTitle>
-            <CardDescription>Buat akun mahasiswa untuk memulai bimbingan</CardDescription>
+        <Card className="rounded-3xl border border-[hsl(var(--ctp-overlay0)/0.25)] bg-[hsl(var(--ctp-base)/0.70)] backdrop-blur-xl shadow-2xl shadow-black/20">
+          <CardHeader className="text-center pb-2 pt-8">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.15, duration: 0.4 }}
+              className="mx-auto mb-4"
+            >
+              <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[hsl(var(--ctp-teal)/0.25)] to-[hsl(var(--ctp-lavender)/0.20)] border border-[hsl(var(--ctp-teal)/0.30)]">
+                <GraduationCap className="w-8 h-8 text-[hsl(var(--ctp-teal))]" />
+              </div>
+            </motion.div>
+            <CardTitle className="text-2xl font-bold text-[hsl(var(--ctp-text))]">Daftar Akun Baru</CardTitle>
+            <CardDescription className="text-[hsl(var(--ctp-subtext0))] mt-1">Buat akun mahasiswa untuk memulai bimbingan</CardDescription>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="px-6 pb-8">
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Nama */}
               <div className="space-y-2">
-                <Label htmlFor="nama">Nama Lengkap</Label>
-                <Input id="nama" placeholder="Masukkan nama lengkap" value={formData.nama} onChange={handleChange('nama')} className={errors.nama ? 'border-red-500' : ''} />
+                <Label htmlFor="nama" className="text-sm text-[hsl(var(--ctp-subtext1))]">Nama Lengkap</Label>
+                <Input id="nama" placeholder="Masukkan nama lengkap" value={formData.nama} onChange={handleChange('nama')} className={`${inputCls} ${errors.nama ? errCls : ''}`} />
                 <FieldError msg={errors.nama} />
               </div>
 
               {/* NPM + Angkatan */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor="npm">NPM</Label>
-                  <Input id="npm" placeholder="1234567890" value={formData.npm} onChange={handleChange('npm')} className={errors.npm ? 'border-red-500' : ''} />
+                  <Label htmlFor="npm" className="text-sm text-[hsl(var(--ctp-subtext1))]">NPM</Label>
+                  <Input id="npm" placeholder="1234567890" value={formData.npm} onChange={handleChange('npm')} className={`${inputCls} ${errors.npm ? errCls : ''}`} />
                   <FieldError msg={errors.npm} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="angkatan">Angkatan</Label>
+                  <Label htmlFor="angkatan" className="text-sm text-[hsl(var(--ctp-subtext1))]">Angkatan</Label>
                   <Select value={formData.angkatan} onValueChange={handleChange('angkatan')}>
-                    <SelectTrigger id="angkatan" className={errors.angkatan ? 'border-red-500' : ''}>
+                    <SelectTrigger id="angkatan" className={`h-11 rounded-xl bg-[hsl(var(--ctp-surface0)/0.45)] border-[hsl(var(--ctp-overlay0)/0.35)] text-[hsl(var(--ctp-text))] ${errors.angkatan ? errCls : ''}`}>
                       <SelectValue placeholder="Pilih" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-xl bg-[hsl(var(--ctp-surface0))] border-[hsl(var(--ctp-overlay0)/0.45)]">
                       {angkatanOptions.map((year) => (
-                        <SelectItem key={year} value={year}>{year}</SelectItem>
+                        <SelectItem key={year} value={year} className="text-[hsl(var(--ctp-text))] focus:bg-[hsl(var(--ctp-surface1)/0.6)] focus:text-[hsl(var(--ctp-text))]">{year}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -179,28 +202,28 @@ export default function RegisterPage() {
 
               {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="contoh@email.com" value={formData.email} onChange={handleChange('email')} className={errors.email ? 'border-red-500' : ''} />
+                <Label htmlFor="email" className="text-sm text-[hsl(var(--ctp-subtext1))]">Email</Label>
+                <Input id="email" type="email" placeholder="contoh@email.com" value={formData.email} onChange={handleChange('email')} className={`${inputCls} ${errors.email ? errCls : ''}`} />
                 <FieldError msg={errors.email} />
               </div>
 
               {/* WhatsApp */}
               <div className="space-y-2">
-                <Label htmlFor="whatsapp">Nomor WhatsApp</Label>
-                <Input id="whatsapp" placeholder="08123456789" value={formData.whatsapp} onChange={handleChange('whatsapp')} className={errors.whatsapp ? 'border-red-500' : ''} />
+                <Label htmlFor="whatsapp" className="text-sm text-[hsl(var(--ctp-subtext1))]">Nomor WhatsApp</Label>
+                <Input id="whatsapp" placeholder="08123456789" value={formData.whatsapp} onChange={handleChange('whatsapp')} className={`${inputCls} ${errors.whatsapp ? errCls : ''}`} />
                 <FieldError msg={errors.whatsapp} />
               </div>
 
               {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-sm text-[hsl(var(--ctp-subtext1))]">Password</Label>
                 <div className="relative">
                   <Input
                     id="password" type={showPassword ? 'text' : 'password'} placeholder="Minimal 8 karakter"
                     value={formData.password} onChange={handleChange('password')}
-                    className={`pr-10 ${errors.password ? 'border-red-500' : ''}`}
+                    className={`${inputCls} pr-10 ${errors.password ? errCls : ''}`}
                   />
-                  <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" onClick={() => setShowPassword(!showPassword)}>
+                  <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--ctp-overlay1))] hover:text-[hsl(var(--ctp-subtext1))] transition-colors" onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
@@ -216,48 +239,71 @@ export default function RegisterPage() {
 
               {/* Confirm Password */}
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
+                <Label htmlFor="confirmPassword" className="text-sm text-[hsl(var(--ctp-subtext1))]">Konfirmasi Password</Label>
                 <Input
                   id="confirmPassword" type="password" placeholder="Ulangi password"
                   value={formData.confirmPassword} onChange={handleChange('confirmPassword')}
-                  className={errors.confirmPassword ? 'border-red-500' : ''}
+                  className={`${inputCls} ${errors.confirmPassword ? errCls : ''}`}
                 />
                 <FieldError msg={errors.confirmPassword} />
               </div>
 
               {/* Terms */}
               <div className="space-y-1">
-                <div className="flex items-start gap-2">
-                  <input type="checkbox" id="terms" checked={formData.terms} onChange={handleCheckbox('terms')} className="mt-1 rounded border-slate-300" />
-                  <label htmlFor="terms" className="text-xs text-slate-500">
-                    Saya menyetujui <a href="#" className="text-primary hover:underline">Syarat & Ketentuan</a> dan <a href="#" className="text-primary hover:underline">Kebijakan Privasi</a>
+                <div className="flex items-start gap-2.5">
+                  <input
+                    type="checkbox" id="terms" checked={formData.terms} onChange={handleCheckbox('terms')}
+                    className="mt-1 h-4 w-4 rounded border-[hsl(var(--ctp-overlay0)/0.5)] bg-[hsl(var(--ctp-surface0)/0.4)] accent-[hsl(var(--ctp-lavender))]"
+                  />
+                  <label htmlFor="terms" className="text-xs text-[hsl(var(--ctp-subtext0))] leading-relaxed">
+                    Saya menyetujui <a href="#" className="text-[hsl(var(--ctp-lavender))] hover:underline">Syarat &amp; Ketentuan</a> dan <a href="#" className="text-[hsl(var(--ctp-lavender))] hover:underline">Kebijakan Privasi</a>
                   </label>
                 </div>
                 <FieldError msg={errors.terms} />
               </div>
 
               {/* Submit */}
-              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full h-11 rounded-xl bg-gradient-to-r from-[hsl(var(--ctp-teal)/0.25)] to-[hsl(var(--ctp-lavender)/0.20)] text-[hsl(var(--ctp-text))] hover:from-[hsl(var(--ctp-teal)/0.35)] hover:to-[hsl(var(--ctp-lavender)/0.30)] border border-[hsl(var(--ctp-teal)/0.30)] transition-all duration-200 font-semibold"
+                size="lg"
+                disabled={loading}
+              >
                 {loading ? (
                   <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="w-4 h-4 border-2 border-[hsl(var(--ctp-teal)/0.3)] border-t-[hsl(var(--ctp-teal))] rounded-full animate-spin" />
                     Mendaftar...
                   </span>
                 ) : (
-                  'Daftar'
+                  <span className="flex items-center gap-2">
+                    <UserPlus className="w-4 h-4" />
+                    Daftar
+                  </span>
                 )}
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-slate-500">
-              Sudah punya akun?{' '}
-              <Link href="/login" className="text-primary font-semibold hover:text-primary/80">
-                Masuk
+            {/* Divider */}
+            <div className="flex items-center gap-3 my-6">
+              <div className="flex-1 h-px bg-[hsl(var(--ctp-overlay0)/0.25)]" />
+              <span className="text-xs text-[hsl(var(--ctp-overlay1))]">sudah punya akun?</span>
+              <div className="flex-1 h-px bg-[hsl(var(--ctp-overlay0)/0.25)]" />
+            </div>
+
+            {/* Login link */}
+            <div className="text-center text-sm text-[hsl(var(--ctp-subtext0))]">
+              <Link href="/login" className="text-[hsl(var(--ctp-lavender))] font-semibold hover:text-[hsl(var(--ctp-mauve))] transition-colors">
+                Masuk ke Akun
               </Link>
             </div>
           </CardContent>
         </Card>
-      </div>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-[hsl(var(--ctp-overlay1))] mt-6">
+          &copy; 2025 Kavana Bimbingan Online
+        </p>
+      </motion.div>
     </div>
   );
 }

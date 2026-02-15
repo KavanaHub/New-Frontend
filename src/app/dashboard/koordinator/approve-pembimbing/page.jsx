@@ -23,7 +23,7 @@ export default function ApprovePembimbingPage() {
   const [selectedDosen, setSelectedDosen] = useState('');
 
   useEffect(() => {
-    if (role && role !== 'koordinator') { router.replace(`/dashboard/${role}`); return; }
+    if (role && !['koordinator','kaprodi'].includes(role)) { router.replace(`/dashboard/${role}`); return; }
     loadData();
   }, [role]);
 
