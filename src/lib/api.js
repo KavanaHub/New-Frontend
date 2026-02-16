@@ -107,6 +107,36 @@ export const authAPI = {
         clearToken();
         sessionStorage.clear();
     },
+
+    requestOTP: (email, type = 'reset_password') =>
+        apiRequest('/api/auth/request-otp', {
+            method: 'POST',
+            body: JSON.stringify({ email, type }),
+        }),
+
+    verifyOTP: (email, otp, type = 'reset_password') =>
+        apiRequest('/api/auth/verify-otp', {
+            method: 'POST',
+            body: JSON.stringify({ email, otp, type }),
+        }),
+
+    resetPassword: (reset_token, new_password) =>
+        apiRequest('/api/auth/reset-password', {
+            method: 'POST',
+            body: JSON.stringify({ reset_token, new_password }),
+        }),
+
+    requestRegisterOTP: (data) =>
+        apiRequest('/api/auth/request-register-otp', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        }),
+
+    verifyRegisterOTP: (email, otp) =>
+        apiRequest('/api/auth/verify-register-otp', {
+            method: 'POST',
+            body: JSON.stringify({ email, otp }),
+        }),
 };
 
 // ========================================

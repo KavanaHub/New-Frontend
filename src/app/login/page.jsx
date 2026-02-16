@@ -153,13 +153,12 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="password" className="text-sm text-[hsl(var(--ctp-subtext1))]">Password</Label>
-                  <button
-                    type="button"
+                  <Link
+                    href="/forgot-password"
                     className="text-xs text-[hsl(var(--ctp-lavender))] hover:text-[hsl(var(--ctp-lavender)/0.8)] font-medium transition-colors"
-                    onClick={() => toast.info('Fitur lupa password akan segera hadir. Hubungi admin untuk reset.')}
                   >
                     Lupa password?
-                  </button>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Input
