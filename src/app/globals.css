@@ -47,9 +47,76 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-/* ===== CATPPUCCIN MOCHA THEME ===== */
+/* ===================================
+   CATPPUCCIN LATTE — LIGHT THEME
+   =================================== */
 :root {
-  /* Catppuccin Mocha palette */
+  --ctp-rosewater: 11 59% 67%;
+  --ctp-flamingo: 0 60% 67%;
+  --ctp-pink: 316 73% 69%;
+  --ctp-mauve: 266 85% 58%;
+  --ctp-red: 347 87% 44%;
+  --ctp-maroon: 355 76% 59%;
+  --ctp-peach: 22 99% 52%;
+  --ctp-yellow: 35 77% 49%;
+  --ctp-green: 109 58% 40%;
+  --ctp-teal: 183 74% 35%;
+  --ctp-sky: 197 97% 46%;
+  --ctp-sapphire: 189 70% 42%;
+  --ctp-blue: 220 91% 54%;
+  --ctp-lavender: 231 97% 72%;
+
+  --ctp-text: 234 16% 35%;
+  --ctp-subtext1: 233 13% 41%;
+  --ctp-subtext0: 233 10% 47%;
+  --ctp-overlay2: 232 10% 55%;
+  --ctp-overlay1: 231 10% 62%;
+  --ctp-overlay0: 228 11% 65%;
+  --ctp-surface2: 227 12% 71%;
+  --ctp-surface1: 225 14% 77%;
+  --ctp-surface0: 223 16% 83%;
+  --ctp-base: 220 23% 95%;
+  --ctp-mantle: 220 22% 92%;
+  --ctp-crust: 220 21% 89%;
+
+  --radius: 0.75rem;
+  --background: hsl(var(--ctp-base));
+  --foreground: hsl(var(--ctp-text));
+  --card: hsl(var(--ctp-mantle));
+  --card-foreground: hsl(var(--ctp-text));
+  --popover: hsl(var(--ctp-crust));
+  --popover-foreground: hsl(var(--ctp-text));
+  --primary: hsl(var(--ctp-lavender));
+  --primary-foreground: hsl(220 23% 98%);
+  --secondary: hsl(var(--ctp-surface0));
+  --secondary-foreground: hsl(var(--ctp-text));
+  --muted: hsl(var(--ctp-surface0));
+  --muted-foreground: hsl(var(--ctp-subtext0));
+  --accent: hsl(var(--ctp-surface0));
+  --accent-foreground: hsl(var(--ctp-text));
+  --destructive: hsl(var(--ctp-red));
+  --border: hsl(var(--ctp-surface1));
+  --input: hsl(var(--ctp-surface1));
+  --ring: hsl(var(--ctp-lavender) / 0.6);
+  --chart-1: hsl(var(--ctp-lavender));
+  --chart-2: hsl(var(--ctp-teal));
+  --chart-3: hsl(var(--ctp-mauve));
+  --chart-4: hsl(var(--ctp-peach));
+  --chart-5: hsl(var(--ctp-green));
+  --sidebar: hsl(var(--ctp-crust));
+  --sidebar-foreground: hsl(var(--ctp-text));
+  --sidebar-primary: hsl(var(--ctp-lavender));
+  --sidebar-primary-foreground: hsl(220 23% 98%);
+  --sidebar-accent: hsl(var(--ctp-surface0));
+  --sidebar-accent-foreground: hsl(var(--ctp-text));
+  --sidebar-border: hsl(var(--ctp-surface1));
+  --sidebar-ring: hsl(var(--ctp-lavender) / 0.6);
+}
+
+/* ===================================
+   CATPPUCCIN MOCHA — DARK THEME
+   =================================== */
+.dark {
   --ctp-rosewater: 10 56% 91%;
   --ctp-flamingo: 0 59% 88%;
   --ctp-pink: 316 72% 86%;
@@ -78,8 +145,6 @@
   --ctp-mantle: 240 21% 12%;
   --ctp-crust: 240 23% 9%;
 
-  /* Map Shadcn tokens → Catppuccin */
-  --radius: 0.75rem;
   --background: hsl(var(--ctp-base));
   --foreground: hsl(var(--ctp-text));
   --card: hsl(var(--ctp-surface0) / 0.55);
@@ -122,8 +187,34 @@
   }
 }
 
-/* ===== GLASSMORPHISM UTILITIES ===== */
+/* ===== GLASSMORPHISM UTILITIES — LIGHT ===== */
 .ctp-noise {
+  background-image:
+    radial-gradient(1200px 600px at 12% 8%, hsl(var(--ctp-lavender) / 0.08), transparent 55%),
+    radial-gradient(900px 520px at 88% 12%, hsl(var(--ctp-teal) / 0.06), transparent 55%),
+    radial-gradient(1100px 650px at 55% 92%, hsl(var(--ctp-blue) / 0.05), transparent 55%),
+    linear-gradient(to bottom, hsl(var(--ctp-crust)), hsl(var(--ctp-base)));
+}
+
+.ctp-grid {
+  background-image:
+    linear-gradient(hsl(var(--ctp-surface1) / 0.40) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--ctp-surface1) / 0.40) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 70% 55% at 50% 22%, black 55%, transparent 85%);
+}
+
+.ctp-ring {
+  box-shadow: 0 1px 3px hsl(var(--ctp-surface2) / 0.30), 0 4px 16px hsl(var(--ctp-surface2) / 0.15);
+}
+
+.ctp-focus:focus-visible {
+  outline: 2px solid hsl(var(--ctp-lavender) / 0.7);
+  outline-offset: 2px;
+}
+
+/* ===== GLASSMORPHISM UTILITIES — DARK ===== */
+.dark .ctp-noise {
   background-image:
     radial-gradient(1200px 600px at 12% 8%, hsl(var(--ctp-mauve) / 0.20), transparent 55%),
     radial-gradient(900px 520px at 88% 12%, hsl(var(--ctp-teal) / 0.14), transparent 55%),
@@ -131,7 +222,7 @@
     linear-gradient(to bottom, hsl(var(--ctp-mantle)), hsl(var(--ctp-base)));
 }
 
-.ctp-grid {
+.dark .ctp-grid {
   background-image:
     linear-gradient(hsl(var(--ctp-overlay0) / 0.10) 1px, transparent 1px),
     linear-gradient(90deg, hsl(var(--ctp-overlay0) / 0.10) 1px, transparent 1px);
@@ -139,24 +230,29 @@
   mask-image: radial-gradient(ellipse 70% 55% at 50% 22%, black 55%, transparent 85%);
 }
 
-.ctp-ring {
+.dark .ctp-ring {
   box-shadow: 0 0 0 1px hsl(var(--ctp-overlay0) / 0.22), 0 16px 50px -30px hsl(var(--ctp-crust) / 0.95);
-}
-
-.ctp-focus:focus-visible {
-  outline: 2px solid hsl(var(--ctp-lavender) / 0.8);
-  outline-offset: 2px;
 }
 
 /* ===== RECHARTS OVERRIDES ===== */
 .recharts-cartesian-grid line {
+  stroke: hsl(var(--ctp-surface1));
+}
+
+.dark .recharts-cartesian-grid line {
   stroke: hsl(var(--ctp-overlay0) / 0.22);
 }
 
 .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: hsl(var(--ctp-crust)) !important;
+  border: 1px solid hsl(var(--ctp-surface1)) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px hsl(var(--ctp-surface2) / 0.25) !important;
+}
+
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
   background: hsl(var(--ctp-mantle) / 0.95) !important;
   border: 1px solid hsl(var(--ctp-overlay0) / 0.35) !important;
-  border-radius: 12px !important;
   box-shadow: 0 18px 50px -32px hsl(var(--ctp-crust) / 0.95) !important;
 }
 
@@ -173,9 +269,24 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--ctp-overlay0) / 0.35);
+  background: hsl(var(--ctp-surface2));
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--ctp-overlay0));
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background: hsl(var(--ctp-overlay0) / 0.35);
+}
+.dark::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--ctp-overlay0) / 0.55);
+}
+
+/* ===== SMOOTH THEME TRANSITION ===== */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 0.3s ease, color 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
 }

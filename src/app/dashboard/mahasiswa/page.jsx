@@ -27,17 +27,58 @@ import { useAuthStore } from '@/store/auth-store';
 import { mahasiswaAPI } from '@/lib/api';
 import { removeAcademicTitles } from '@/lib/validators';
 
-// Static chart data (will later come from API)
-const chartSubmissionData = [
-  { name: 'Sen', v: 2 }, { name: 'Sel', v: 4 }, { name: 'Rab', v: 3 },
-  { name: 'Kam', v: 5 }, { name: 'Jum', v: 4 }, { name: 'Sab', v: 1 }, { name: 'Min', v: 0 },
-];
+// ==========================================
+// HELPER: Compute "Aktivitas bimbingan (7 hari)" from real bimbingan data
+// ==========================================
+const DAY_NAMES = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
-const chartProgressData = [
-  { name: 'Proposal', v: 1 }, { name: 'Bab 1', v: 1 }, { name: 'Bab 2', v: 1 },
-  { name: 'Bab 3', v: 0 }, { name: 'Bab 4', v: 0 }, { name: 'Bab 5', v: 0 },
-];
+function computeWeeklyActivity(bimbinganList) {
+  const now = new Date();
+  // Build map for last 7 days
+  const dayMap = {};
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const key = d.toISOString().slice(0, 10); // YYYY-MM-DD
+    dayMap[key] = { name: DAY_NAMES[d.getDay()], v: 0 };
+  }
 
+  bimbinganList.forEach((b) => {
+    if (!b.tanggal) return;
+    // tanggal could be "2025-11-20T00:00:00.000Z" or "2025-11-20"
+    const dateKey = b.tanggal.slice(0, 10);
+    if (dayMap[dateKey]) {
+      dayMap[dateKey].v += 1;
+    }
+  });
+
+  return Object.values(dayMap);
+}
+
+// ==========================================
+// HELPER: Compute status distribution from real bimbingan data
+// ==========================================
+function computeStatusDistribution(bimbinganList) {
+  let approved = 0;
+  let pending = 0;
+  let rejected = 0;
+
+  bimbinganList.forEach((b) => {
+    if (b.status === 'approved' || b.status === 'disetujui') approved++;
+    else if (b.status === 'rejected' || b.status === 'ditolak') rejected++;
+    else pending++;
+  });
+
+  return [
+    { name: 'Disetujui', v: approved },
+    { name: 'Menunggu', v: pending },
+    { name: 'Ditolak', v: rejected },
+  ];
+}
+
+// ==========================================
+// COMPONENTS
+// ==========================================
 function RiskBadge({ risk }) {
   const map = {
     low: 'bg-[hsl(var(--ctp-green)/0.14)] text-[hsl(var(--ctp-green))] border-[hsl(var(--ctp-green)/0.3)]',
@@ -96,11 +137,15 @@ function StatCard({ title, value, delta, dir, sub }) {
   );
 }
 
+// ==========================================
+// MAIN DASHBOARD
+// ==========================================
 export default function MahasiswaDashboard() {
   const router = useRouter();
   const { user, role, setUser } = useAuthStore();
   const [profile, setProfile] = useState(null);
   const [bimbinganList, setBimbinganList] = useState([]);
+  const [laporanData, setLaporanData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -113,13 +158,19 @@ export default function MahasiswaDashboard() {
 
   const loadDashboard = async () => {
     try {
-      const [profileRes, bimbinganRes] = await Promise.all([
+      const [profileRes, bimbinganRes, laporanRes] = await Promise.all([
         mahasiswaAPI.getProfile(),
         mahasiswaAPI.getMyBimbingan(),
+        mahasiswaAPI.getMyLaporan().catch(() => ({ ok: false })),
       ]);
       if (profileRes.ok) { setProfile(profileRes.data); setUser(profileRes.data); }
       if (bimbinganRes.ok) {
         setBimbinganList(Array.isArray(bimbinganRes.data) ? bimbinganRes.data : bimbinganRes.data?.data || []);
+      }
+      if (laporanRes.ok) {
+        // laporanRes.data could be an object or array
+        const lap = Array.isArray(laporanRes.data) ? laporanRes.data[0] : laporanRes.data;
+        setLaporanData(lap || null);
       }
     } catch (err) {
       console.error('Error loading dashboard:', err);
@@ -133,13 +184,20 @@ export default function MahasiswaDashboard() {
   const pendingCount = bimbinganList.filter((b) => b.status === 'pending' || b.status === 'menunggu').length;
   const totalBimbingan = bimbinganList.length;
 
+  // Computed chart data from real bimbingan
+  const chartSubmissionData = useMemo(() => computeWeeklyActivity(bimbinganList), [bimbinganList]);
+  const statusDistData = useMemo(() => computeStatusDistribution(bimbinganList), [bimbinganList]);
+
+  // Laporan status from real API
+  const laporanStatus = laporanData?.status || laporanData?.status_laporan || 'belum';
+
   const recentActivity = useMemo(() => {
     return bimbinganList.slice(0, 5).map((b, i) => ({
       id: b.id || `B-${i}`,
       actor: displayName,
       action: b.status === 'approved' ? 'Approved' : b.status === 'pending' ? 'Upload' : 'Revisi',
       target: b.topik || b.catatan || `Bimbingan ke-${i + 1}`,
-      when: b.tanggal || '-',
+      when: b.tanggal ? b.tanggal.slice(0, 10) : '-',
       risk: b.status === 'rejected' || b.status === 'ditolak' ? 'high' : b.status === 'pending' ? 'medium' : 'low',
     }));
   }, [bimbinganList, displayName]);
@@ -209,7 +267,7 @@ export default function MahasiswaDashboard() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs text-[hsl(var(--ctp-subtext1))]">{s.tanggal || '-'}</span>
+                        <span className="font-mono text-xs text-[hsl(var(--ctp-subtext1))]">{s.tanggal ? s.tanggal.slice(0, 10) : '-'}</span>
                       </div>
                       <div className="mt-1 truncate text-sm font-semibold text-[hsl(var(--ctp-text))]">{s.topik || s.catatan || `Sesi ke-${i + 1}`}</div>
                     </div>
@@ -244,7 +302,7 @@ export default function MahasiswaDashboard() {
           <CardContent className="space-y-2">
             {[
               { title: 'Proposal', status: profile?.proposal_status || profile?.status_proposal || 'belum', tag: 'Proposal', due: '-' },
-              { title: 'Laporan Sidang', status: 'belum', tag: 'Laporan', due: '-' },
+              { title: 'Laporan Sidang', status: laporanStatus, tag: 'Laporan', due: '-' },
             ].map((d) => (
               <div key={d.title} className="rounded-2xl border border-[hsl(var(--ctp-overlay0)/0.35)] bg-[hsl(var(--ctp-mantle)/0.35)] p-3">
                 <div className="flex items-start justify-between gap-3">
@@ -325,7 +383,7 @@ export default function MahasiswaDashboard() {
 
       {/* Analytics row */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        {/* Submission chart */}
+        {/* Submission chart - NOW REAL DATA */}
         <Card className="xl:col-span-2 bg-[hsl(var(--ctp-surface0)/0.55)] border-[hsl(var(--ctp-overlay0)/0.45)] ctp-ring">
           <CardHeader className="flex flex-row items-start justify-between gap-3">
             <div>
@@ -337,40 +395,54 @@ export default function MahasiswaDashboard() {
             </Button>
           </CardHeader>
           <CardContent>
-            <div className="h-[280px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartSubmissionData} margin={{ left: 8, right: 8, top: 10, bottom: 0 }}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--ctp-subtext0))', fontSize: 12 }} />
-                  <YAxis tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--ctp-subtext0))', fontSize: 12 }} />
-                  <Tooltip />
-                  <Area type="monotone" dataKey="v" stroke="hsl(var(--ctp-lavender))" fill="hsl(var(--ctp-lavender)/0.18)" strokeWidth={2} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+            {chartSubmissionData.every((d) => d.v === 0) ? (
+              <div className="flex flex-col items-center justify-center h-[280px] text-center">
+                <CalendarDays className="w-10 h-10 text-[hsl(var(--ctp-overlay1))] mb-3" />
+                <p className="text-sm text-[hsl(var(--ctp-subtext0))]">Tidak ada aktivitas bimbingan dalam 7 hari terakhir</p>
+              </div>
+            ) : (
+              <div className="h-[280px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartSubmissionData} margin={{ left: 8, right: 8, top: 10, bottom: 0 }}>
+                    <CartesianGrid vertical={false} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--ctp-subtext0))', fontSize: 12 }} />
+                    <YAxis tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--ctp-subtext0))', fontSize: 12 }} allowDecimals={false} />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="v" stroke="hsl(var(--ctp-lavender))" fill="hsl(var(--ctp-lavender)/0.18)" strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Progress bar chart */}
+        {/* Status distribution chart - REAL DATA */}
         <Card className="bg-[hsl(var(--ctp-surface0)/0.55)] border-[hsl(var(--ctp-overlay0)/0.45)] ctp-ring">
           <CardHeader className="flex flex-row items-start justify-between gap-3">
             <div>
-              <CardTitle className="text-[hsl(var(--ctp-text))]">Progres bab</CardTitle>
-              <CardDescription className="text-[hsl(var(--ctp-subtext0))]">Sebaran penyelesaian per bab.</CardDescription>
+              <CardTitle className="text-[hsl(var(--ctp-text))]">Status bimbingan</CardTitle>
+              <CardDescription className="text-[hsl(var(--ctp-subtext0))]">Distribusi status semua sesi.</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="h-[220px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartProgressData} margin={{ left: 4, right: 4, top: 10, bottom: 0 }}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--ctp-subtext0))', fontSize: 12 }} />
-                  <YAxis tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--ctp-subtext0))', fontSize: 12 }} />
-                  <Tooltip />
-                  <Bar dataKey="v" fill="hsl(var(--ctp-teal)/0.55)" radius={[10, 10, 6, 6]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            {totalBimbingan === 0 ? (
+              <div className="flex flex-col items-center justify-center h-[220px] text-center">
+                <FileText className="w-10 h-10 text-[hsl(var(--ctp-overlay1))] mb-3" />
+                <p className="text-sm text-[hsl(var(--ctp-subtext0))]">Belum ada data bimbingan</p>
+              </div>
+            ) : (
+              <div className="h-[220px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={statusDistData} margin={{ left: 4, right: 4, top: 10, bottom: 0 }}>
+                    <CartesianGrid vertical={false} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--ctp-subtext0))', fontSize: 12 }} />
+                    <YAxis tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--ctp-subtext0))', fontSize: 12 }} allowDecimals={false} />
+                    <Tooltip />
+                    <Bar dataKey="v" fill="hsl(var(--ctp-teal)/0.55)" radius={[10, 10, 6, 6]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
 
             {/* Next session mini-card */}
             <div className="rounded-2xl border border-[hsl(var(--ctp-overlay0)/0.35)] bg-[hsl(var(--ctp-mantle)/0.35)] p-3">
@@ -436,11 +508,6 @@ export default function MahasiswaDashboard() {
         </Card>
       )}
 
-      {/* Footer */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[hsl(var(--ctp-overlay0)/0.30)] bg-[hsl(var(--ctp-mantle)/0.35)] px-4 py-3">
-        <div className="text-xs text-[hsl(var(--ctp-subtext0))]">Kavana Bimbingan Online — Alur: dokumen → review → revisi → jadwal</div>
-        <div className="text-xs text-[hsl(var(--ctp-subtext0))]">Theme: Catppuccin Mocha</div>
-      </div>
     </motion.div>
   );
 }

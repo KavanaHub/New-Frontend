@@ -31,11 +31,24 @@ function useTheme() {
   useEffect(() => {
     const stored = localStorage.getItem('kavana-theme') || 'dark';
     setThemeState(stored);
-    applyTheme(stored);
+    applyTheme(stored, false);
+
+    // Listen for system preference changes
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = () => {
+      const current = localStorage.getItem('kavana-theme');
+      if (current === 'system') applyTheme('system', true);
+    };
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
   }, []);
 
-  const applyTheme = (t) => {
+  const applyTheme = (t, animate = true) => {
     const root = document.documentElement;
+    if (animate) {
+      root.classList.add('theme-transition');
+      setTimeout(() => root.classList.remove('theme-transition'), 400);
+    }
     root.classList.remove('light', 'dark');
     if (t === 'system') {
       const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -48,7 +61,7 @@ function useTheme() {
   const setTheme = (t) => {
     setThemeState(t);
     localStorage.setItem('kavana-theme', t);
-    applyTheme(t);
+    applyTheme(t, true);
   };
 
   return { theme, setTheme };
@@ -79,7 +92,7 @@ function useFormattedDate() {
   return date;
 }
 
-const iconBtnCls = "ctp-focus h-9 w-9 rounded-xl border border-[hsl(var(--ctp-overlay0)/0.30)] bg-[hsl(var(--ctp-surface0)/0.30)] hover:bg-[hsl(var(--ctp-surface0)/0.50)] transition-colors";
+const iconBtnCls = "ctp-focus h-9 w-9 rounded-xl border border-[hsl(var(--ctp-surface2))] bg-[hsl(var(--ctp-surface0))] hover:bg-[hsl(var(--ctp-surface1))] transition-colors";
 
 export function DashboardLayout({ children, allowedRoles = [] }) {
   const role = useAuthStore((s) => s.role);
@@ -124,7 +137,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
           <main className="flex-1">
             {/* Top Navbar */}
             <header className="sticky top-0 z-20 px-4 lg:px-5 pt-3 lg:pt-4">
-              <div className="rounded-2xl border border-[hsl(var(--ctp-overlay0)/0.30)] bg-[hsl(var(--ctp-mantle)/0.60)] backdrop-blur-lg">
+              <div className="rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust))] shadow-sm backdrop-blur-lg">
                 <div className="flex items-center gap-3 px-4 py-2.5">
                   {/* Mobile hamburger */}
                   <div className="lg:hidden">
@@ -209,16 +222,16 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          className="ctp-focus h-9 rounded-xl border border-[hsl(var(--ctp-overlay0)/0.30)] bg-[hsl(var(--ctp-surface0)/0.30)] hover:bg-[hsl(var(--ctp-surface0)/0.50)] pl-1.5 pr-2 gap-1.5"
+                          className="ctp-focus h-9 rounded-xl border border-[hsl(var(--ctp-surface2))] bg-[hsl(var(--ctp-surface0))] hover:bg-[hsl(var(--ctp-surface1))] pl-1.5 pr-2 gap-1.5"
                         >
-                          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-[hsl(var(--ctp-lavender)/0.30)] border border-[hsl(var(--ctp-lavender)/0.40)] text-[10px] font-bold text-[hsl(var(--ctp-crust))]">
+                          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-[hsl(var(--ctp-lavender)/0.25)] border border-[hsl(var(--ctp-lavender)/0.40)] text-[10px] font-bold text-[hsl(var(--ctp-text))]">
                             {initials}
                           </span>
                           <span className="hidden sm:inline text-sm text-[hsl(var(--ctp-text))] font-medium">{displayName.split(' ')[0]}</span>
                           <ChevronDown className="h-3.5 w-3.5 text-[hsl(var(--ctp-overlay1))]" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-52 rounded-xl border-[hsl(var(--ctp-overlay0)/0.35)] bg-[hsl(var(--ctp-base)/0.95)] backdrop-blur-lg p-1">
+                      <DropdownMenuContent align="end" className="w-52 rounded-xl border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust))] backdrop-blur-lg p-1 shadow-lg">
                         <DropdownMenuLabel className="px-3 py-2">
                           <p className="text-sm font-semibold text-[hsl(var(--ctp-text))]">{displayName}</p>
                           <p className="text-xs text-[hsl(var(--ctp-subtext0))]">{ROLE_LABEL[currentRole] || 'User'}</p>
