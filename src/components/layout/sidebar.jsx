@@ -185,7 +185,7 @@ function SidebarContent({ role, collapsed, onToggle, onItemClick }) {
 
           <div className={cn("space-y-0.5", collapsed && "flex flex-col items-center")}>
             {[
-              { label: 'Support', icon: LifeBuoy, href: '#' },
+              { label: 'Support', icon: LifeBuoy, href: '/dashboard/settings' },
               { label: 'Settings', icon: Settings, href: '/dashboard/settings' },
             ].map((item) =>
               collapsed ? (
@@ -239,7 +239,7 @@ export function MobileSidebar({ role }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden text-[hsl(var(--ctp-text))]">
+        <Button variant="ghost" size="icon" className="lg:hidden text-[hsl(var(--ctp-text))]" aria-label="Buka menu sidebar">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
         </Button>
       </SheetTrigger>

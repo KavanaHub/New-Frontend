@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   User, Mail, Phone, GraduationCap, Hash, Camera, Save,
   Shield, Briefcase, Calendar, Pencil, X, Key, Sun, Moon,
-  Monitor, LogOut, ChevronRight, Bell, BellOff, Globe,
+  LogOut, ChevronRight, Bell, BellOff, Globe,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -42,32 +42,47 @@ function getInitials(name) {
   return name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase();
 }
 
+function useIsHydrated() {
+  return useSyncExternalStore(
+    () => () => { },
+    () => true,
+    () => false
+  );
+}
+
 // ==============================
 // THEME HOOK (mirrors dashboard-layout)
 // ==============================
 function useThemeLocal() {
-  const [theme, setThemeState] = useState(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('kavana-theme') || 'dark';
-    setThemeState(stored);
-    setMounted(true);
+  const resolveTheme = useCallback((value) => {
+    if (value === 'dark' || value === 'light') return value;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }, []);
 
-  const setTheme = (t) => {
-    setThemeState(t);
-    localStorage.setItem('kavana-theme', t);
+  const [theme, setThemeState] = useState(() => {
+    if (typeof window === 'undefined') return 'light';
+    return resolveTheme(localStorage.getItem('kavana-theme'));
+  });
+  const mounted = useIsHydrated();
+
+  const applyTheme = useCallback((t, animate = true) => {
     const root = document.documentElement;
-    root.classList.add('theme-transition');
-    setTimeout(() => root.classList.remove('theme-transition'), 400);
-    root.classList.remove('light', 'dark');
-    if (t === 'system') {
-      const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      root.classList.add(sys);
-    } else {
-      root.classList.add(t);
+    if (animate) {
+      root.classList.add('theme-transition');
+      setTimeout(() => root.classList.remove('theme-transition'), 400);
     }
+    root.classList.remove('light', 'dark');
+    root.classList.add(t === 'dark' ? 'dark' : 'light');
+  }, []);
+
+  useEffect(() => {
+    applyTheme(theme, false);
+  }, [theme, applyTheme]);
+
+  const setTheme = (t) => {
+    const nextTheme = t === 'dark' ? 'dark' : 'light';
+    setThemeState(nextTheme);
+    localStorage.setItem('kavana-theme', nextTheme);
   };
 
   return { theme, setTheme, mounted };
@@ -253,6 +268,7 @@ export default function ProfilePage() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
+                aria-label={uploading ? 'Mengunggah foto profil' : 'Unggah foto profil'}
                 className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
               >
                 {uploading ? (
@@ -361,11 +377,10 @@ export default function ProfilePage() {
               </div>
             </div>
             {mounted && (
-              <div className="grid grid-cols-3 gap-2 mt-3">
+              <div className="grid grid-cols-2 gap-2 mt-3">
                 {[
                   { id: 'light', label: 'Terang', icon: Sun },
                   { id: 'dark', label: 'Gelap', icon: Moon },
-                  { id: 'system', label: 'Sistem', icon: Monitor },
                 ].map(({ id, label, icon: Ic }) => (
                   <button
                     key={id}

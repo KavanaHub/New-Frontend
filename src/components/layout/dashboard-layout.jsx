@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useState, useSyncExternalStore, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Bell, ChevronDown, Moon, Sun, Monitor, User, Settings, LogOut, CalendarDays, Maximize2, Minimize2 } from 'lucide-react';
+import { Bell, ChevronDown, Moon, Sun, User, Settings, LogOut, CalendarDays, Maximize2, Minimize2 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { DesktopSidebar, MobileSidebar } from '@/components/layout/sidebar';
 import { AuthGuard } from '@/components/auth/auth-guard';
@@ -26,42 +26,34 @@ import {
 } from '@/components/ui/tooltip';
 
 function useTheme() {
-  const [theme, setThemeState] = useState('dark');
-
-  useEffect(() => {
-    const stored = localStorage.getItem('kavana-theme') || 'dark';
-    setThemeState(stored);
-    applyTheme(stored, false);
-
-    // Listen for system preference changes
-    const mql = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = () => {
-      const current = localStorage.getItem('kavana-theme');
-      if (current === 'system') applyTheme('system', true);
-    };
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
+  const resolveTheme = useCallback((value) => {
+    if (value === 'dark' || value === 'light') return value;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }, []);
 
-  const applyTheme = (t, animate = true) => {
+  const [theme, setThemeState] = useState(() => {
+    if (typeof window === 'undefined') return 'light';
+    return resolveTheme(localStorage.getItem('kavana-theme'));
+  });
+
+  const applyTheme = useCallback((t, animate = true) => {
     const root = document.documentElement;
     if (animate) {
       root.classList.add('theme-transition');
       setTimeout(() => root.classList.remove('theme-transition'), 400);
     }
     root.classList.remove('light', 'dark');
-    if (t === 'system') {
-      const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      root.classList.add(sys);
-    } else {
-      root.classList.add(t);
-    }
-  };
+    root.classList.add(t === 'dark' ? 'dark' : 'light');
+  }, []);
+
+  useEffect(() => {
+    applyTheme(theme, false);
+  }, [theme, applyTheme]);
 
   const setTheme = (t) => {
-    setThemeState(t);
-    localStorage.setItem('kavana-theme', t);
-    applyTheme(t, true);
+    const nextTheme = t === 'dark' ? 'dark' : 'light';
+    setThemeState(nextTheme);
+    localStorage.setItem('kavana-theme', nextTheme);
   };
 
   return { theme, setTheme };
@@ -85,14 +77,21 @@ function useFullscreen() {
 }
 
 function useFormattedDate() {
-  const [date, setDate] = useState('');
-  useEffect(() => {
-    setDate(new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
-  }, []);
-  return date;
+  return useMemo(
+    () => new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+    []
+  );
 }
 
 const iconBtnCls = "ctp-focus h-9 w-9 rounded-xl border border-[hsl(var(--ctp-surface2))] bg-[hsl(var(--ctp-surface0))] hover:bg-[hsl(var(--ctp-surface1))] transition-colors";
+
+function useIsHydrated() {
+  return useSyncExternalStore(
+    () => () => { },
+    () => true,
+    () => false
+  );
+}
 
 export function DashboardLayout({ children, allowedRoles = [] }) {
   const role = useAuthStore((s) => s.role);
@@ -106,9 +105,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
   const { theme, setTheme } = useTheme();
   const { isFull, toggle: toggleFullscreen } = useFullscreen();
   const todayDate = useFormattedDate();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
+  const isHydrated = useIsHydrated();
 
   const pageTitle = useMemo(() => {
     const segments = pathname.split('/').filter(Boolean);
@@ -121,10 +118,9 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
     window.location.href = '/login';
   };
 
-  const themeIcon = theme === 'dark' ? Moon : theme === 'light' ? Sun : Monitor;
-  const ThemeIcon = themeIcon;
-  const nextTheme = theme === 'dark' ? 'light' : theme === 'light' ? 'system' : 'dark';
-  const themeLabel = theme === 'dark' ? 'Dark' : theme === 'light' ? 'Light' : 'System';
+  const ThemeIcon = theme === 'dark' ? Moon : Sun;
+  const nextTheme = theme === 'dark' ? 'light' : 'dark';
+  const themeLabel = theme === 'dark' ? 'Dark' : 'Light';
 
   return (
     <AuthGuard allowedRoles={allowedRoles}>
@@ -151,7 +147,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
                   </div>
 
                   {/* Date (desktop) */}
-                  {mounted && todayDate && (
+                  {isHydrated && todayDate && (
                     <div className="hidden xl:flex items-center gap-1.5 text-xs text-[hsl(var(--ctp-subtext0))] mr-1">
                       <CalendarDays className="h-3.5 w-3.5" />
                       {todayDate}

@@ -247,12 +247,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--ctp-crust))] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[hsl(var(--ctp-base))] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Soft ambient glows */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 right-0 h-[500px] w-[500px] rounded-full bg-[hsl(var(--ctp-mauve)/0.06)] blur-[120px]" />
-        <div className="absolute -bottom-40 -left-20 h-[600px] w-[600px] rounded-full bg-[hsl(var(--ctp-lavender)/0.05)] blur-[140px]" />
-        <div className="absolute top-1/3 left-1/4 h-[250px] w-[250px] rounded-full bg-[hsl(var(--ctp-teal)/0.04)] blur-[100px]" />
+        <div className="absolute -top-32 right-0 h-[500px] w-[500px] rounded-full bg-[hsl(var(--ctp-mauve)/0.05)] blur-[120px]" />
+        <div className="absolute -bottom-40 -left-20 h-[600px] w-[600px] rounded-full bg-[hsl(var(--ctp-lavender)/0.04)] blur-[140px]" />
+        <div className="absolute top-1/3 left-1/4 h-[250px] w-[250px] rounded-full bg-[hsl(var(--ctp-teal)/0.03)] blur-[100px]" />
       </div>
 
       {/* Subtle grid */}
@@ -358,7 +358,12 @@ export default function RegisterPage() {
                         value={formData.password} onChange={handleChange('password')}
                         className={`${inputCls} pr-10 ${errors.password ? errCls : ''}`}
                       />
-                      <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--ctp-overlay1))] hover:text-[hsl(var(--ctp-subtext1))] transition-colors" onClick={() => setShowPassword(!showPassword)}>
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--ctp-overlay1))] hover:text-[hsl(var(--ctp-subtext1))] transition-colors"
+                        aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
@@ -391,7 +396,7 @@ export default function RegisterPage() {
                         className="mt-1 h-4 w-4 rounded border-[hsl(var(--ctp-overlay0)/0.5)] bg-[hsl(var(--ctp-surface0)/0.4)] accent-[hsl(var(--ctp-lavender))]"
                       />
                       <label htmlFor="terms" className="text-xs text-[hsl(var(--ctp-subtext0))] leading-relaxed">
-                        Saya menyetujui <a href="#" className="text-[hsl(var(--ctp-lavender))] hover:underline">Syarat &amp; Ketentuan</a> dan <a href="#" className="text-[hsl(var(--ctp-lavender))] hover:underline">Kebijakan Privasi</a>
+                        Saya menyetujui syarat dan ketentuan serta kebijakan privasi platform.
                       </label>
                     </div>
                     <FieldError msg={errors.terms} />

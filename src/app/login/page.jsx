@@ -89,12 +89,12 @@ export default function LoginPage() {
   const errCls = "border-[hsl(var(--ctp-red)/0.5)] focus-visible:ring-[hsl(var(--ctp-red)/0.3)]";
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--ctp-crust))] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[hsl(var(--ctp-base))] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Soft ambient glows */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full bg-[hsl(var(--ctp-lavender)/0.06)] blur-[120px]" />
-        <div className="absolute -bottom-40 -right-40 h-[600px] w-[600px] rounded-full bg-[hsl(var(--ctp-mauve)/0.05)] blur-[140px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[300px] rounded-full bg-[hsl(var(--ctp-blue)/0.04)] blur-[100px]" />
+        <div className="absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full bg-[hsl(var(--ctp-lavender)/0.04)] blur-[120px]" />
+        <div className="absolute -bottom-40 -right-40 h-[600px] w-[600px] rounded-full bg-[hsl(var(--ctp-mauve)/0.04)] blur-[140px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[300px] rounded-full bg-[hsl(var(--ctp-blue)/0.03)] blur-[100px]" />
       </div>
 
       {/* Subtle grid pattern */}
@@ -173,6 +173,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--ctp-overlay1))] hover:text-[hsl(var(--ctp-subtext1))] transition-colors"
+                    aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

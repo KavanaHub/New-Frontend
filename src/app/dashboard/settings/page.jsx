@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Key, Sun, Moon, Monitor, LogOut, ChevronRight, Palette,
+  Key, Sun, Moon, LogOut, ChevronRight, Palette,
   Eye, EyeOff, ShieldCheck,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -19,29 +19,44 @@ import { authAPI } from '@/lib/api';
 // ==============================
 // THEME HOOK
 // ==============================
-function useThemeLocal() {
-  const [theme, setThemeState] = useState(null);
-  const [mounted, setMounted] = useState(false);
+function useIsHydrated() {
+  return useSyncExternalStore(
+    () => () => { },
+    () => true,
+    () => false
+  );
+}
 
-  useEffect(() => {
-    const stored = localStorage.getItem('kavana-theme') || 'dark';
-    setThemeState(stored);
-    setMounted(true);
+function useThemeLocal() {
+  const resolveTheme = useCallback((value) => {
+    if (value === 'dark' || value === 'light') return value;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }, []);
 
-  const setTheme = (t) => {
-    setThemeState(t);
-    localStorage.setItem('kavana-theme', t);
+  const [theme, setThemeState] = useState(() => {
+    if (typeof window === 'undefined') return 'light';
+    return resolveTheme(localStorage.getItem('kavana-theme'));
+  });
+  const mounted = useIsHydrated();
+
+  const applyTheme = useCallback((t, animate = true) => {
     const root = document.documentElement;
-    root.classList.add('theme-transition');
-    setTimeout(() => root.classList.remove('theme-transition'), 400);
-    root.classList.remove('light', 'dark');
-    if (t === 'system') {
-      const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      root.classList.add(sys);
-    } else {
-      root.classList.add(t);
+    if (animate) {
+      root.classList.add('theme-transition');
+      setTimeout(() => root.classList.remove('theme-transition'), 400);
     }
+    root.classList.remove('light', 'dark');
+    root.classList.add(t === 'dark' ? 'dark' : 'light');
+  }, []);
+
+  useEffect(() => {
+    applyTheme(theme, false);
+  }, [theme, applyTheme]);
+
+  const setTheme = (t) => {
+    const nextTheme = t === 'dark' ? 'dark' : 'light';
+    setThemeState(nextTheme);
+    localStorage.setItem('kavana-theme', nextTheme);
   };
 
   return { theme, setTheme, mounted };
@@ -120,11 +135,10 @@ export default function SettingsPage() {
               <div className="text-xs text-[hsl(var(--ctp-subtext0))]">Pilih tampilan yang nyaman untuk kamu.</div>
             </div>
             {mounted && (
-              <div className="grid grid-cols-3 gap-2 mt-3">
+              <div className="grid grid-cols-2 gap-2 mt-3">
                 {[
                   { id: 'light', label: 'Terang', icon: Sun, desc: 'Mode terang' },
                   { id: 'dark', label: 'Gelap', icon: Moon, desc: 'Mode gelap' },
-                  { id: 'system', label: 'Sistem', icon: Monitor, desc: 'Ikuti perangkat' },
                 ].map(({ id, label, icon: Ic, desc }) => (
                   <button
                     key={id}
@@ -174,6 +188,7 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => setShowOldPw(!showOldPw)}
+                    aria-label={showOldPw ? 'Sembunyikan password lama' : 'Tampilkan password lama'}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--ctp-overlay1))] hover:text-[hsl(var(--ctp-text))] transition-colors"
                   >
                     {showOldPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -196,6 +211,7 @@ export default function SettingsPage() {
                     <button
                       type="button"
                       onClick={() => setShowNewPw(!showNewPw)}
+                      aria-label={showNewPw ? 'Sembunyikan password baru' : 'Tampilkan password baru'}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--ctp-overlay1))] hover:text-[hsl(var(--ctp-text))] transition-colors"
                     >
                       {showNewPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

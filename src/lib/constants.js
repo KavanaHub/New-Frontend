@@ -132,3 +132,135 @@ export const ROLE_DASHBOARD_ROUTE = {
     kaprodi: '/dashboard/kaprodi',
     admin: '/dashboard/admin',
 };
+
+// ---------- LANDING CONTENT ----------
+
+export const LANDING_CONTENT = {
+    brand: {
+        name: 'Kavana',
+        subtitle: 'Sistem Bimbingan Online',
+    },
+    nav: [
+        { label: 'Beranda', href: '#top' },
+        { label: 'Fitur', href: '#features' },
+        { label: 'Peran', href: '#roles' },
+        { label: 'Alur', href: '#how' },
+        { label: 'Kontak', href: '#contact' },
+    ],
+    hero: {
+        badge: 'Portal Akademik Program Studi',
+        title: 'Bimbingan Akademik Lebih Tertata dan Transparan',
+        description:
+            'Platform terintegrasi untuk mahasiswa, dosen pembimbing, dan pengelola prodi dalam proses proyek, internship, dan administrasi bimbingan.',
+        primaryCta: { label: 'Daftar Akun', href: '/register' },
+        secondaryCta: { label: 'Masuk Sistem', href: '/login' },
+    },
+    stats: [
+        { value: 'Data Resmi', label: 'Statistik pengguna akan dipublikasikan' },
+        { value: 'Sedang Validasi', label: 'Informasi operasional sedang diverifikasi' },
+        { value: 'Diperbarui Berkala', label: 'Konten akan diperbarui oleh pengelola prodi' },
+    ],
+    about: {
+        title: 'Mengapa Menggunakan Kavana?',
+        description:
+            'Kavana membantu proses bimbingan berjalan lebih terstruktur melalui komunikasi terdokumentasi, alur pengajuan yang jelas, dan pemantauan progress lintas peran.',
+        bullets: [
+            'Riwayat bimbingan terdokumentasi dalam satu platform.',
+            'Pengelolaan dokumen akademik lebih rapi dan mudah dipantau.',
+            'Koordinasi antara mahasiswa, dosen, dan pengelola lebih cepat.',
+        ],
+    },
+    features: [
+        {
+            num: '01',
+            title: 'Manajemen Proposal',
+            desc: 'Pengajuan proposal dilakukan secara digital dengan status yang dapat dipantau.',
+            color: 'from-primary to-blue-700',
+        },
+        {
+            num: '02',
+            title: 'Bimbingan Online',
+            desc: 'Pencatatan sesi bimbingan dan persetujuan dosen dalam satu alur kerja.',
+            color: 'from-emerald-600 to-teal-700',
+        },
+        {
+            num: '03',
+            title: 'Monitoring Progres',
+            desc: 'Koordinator dan kaprodi dapat memantau progres mahasiswa secara terpusat.',
+            color: 'from-amber-600 to-orange-700',
+        },
+        {
+            num: '04',
+            title: 'Jadwal Terstruktur',
+            desc: 'Penjadwalan sidang dan tindak lanjut bimbingan lebih terorganisir.',
+            color: 'from-cyan-700 to-blue-800',
+        },
+    ],
+    roles: [
+        {
+            letter: 'M',
+            title: 'Mahasiswa',
+            desc: 'Mengelola proposal, progres, dokumen, dan komunikasi bimbingan.',
+            gradient: 'from-primary to-blue-700',
+        },
+        {
+            letter: 'D',
+            title: 'Dosen Pembimbing',
+            desc: 'Memberikan arahan, review, dan persetujuan bimbingan mahasiswa.',
+            gradient: 'from-emerald-600 to-teal-700',
+        },
+        {
+            letter: 'K',
+            title: 'Koordinator',
+            desc: 'Memvalidasi alur akademik dan mengelola koordinasi lintas pengguna.',
+            gradient: 'from-cyan-700 to-blue-800',
+        },
+        {
+            letter: 'P',
+            title: 'Kaprodi',
+            desc: 'Melakukan monitoring strategis dan pengendalian proses pada level prodi.',
+            gradient: 'from-slate-700 to-slate-900',
+        },
+    ],
+    steps: [
+        { num: 1, title: 'Registrasi', desc: 'Pengguna membuat akun sesuai peran akademik.' },
+        { num: 2, title: 'Pilih Track', desc: 'Mahasiswa menentukan jalur proyek atau internship.' },
+        { num: 3, title: 'Pengajuan', desc: 'Proposal diajukan dan divalidasi oleh pengelola.' },
+        { num: 4, title: 'Bimbingan', desc: 'Sesi bimbingan berjalan dan tercatat terstruktur.' },
+        { num: 5, title: 'Finalisasi', desc: 'Dokumen akhir dan tahapan sidang diproses di sistem.' },
+    ],
+    cta: {
+        title: 'Mulai Gunakan Portal Prodi',
+        description:
+            'Akses sistem untuk mendukung proses bimbingan yang lebih rapi, terdokumentasi, dan akuntabel.',
+        button: { label: 'Buka Halaman Masuk', href: '/login' },
+    },
+    footer: {
+        platformLinks: [
+            { label: 'Portal Mahasiswa', href: '/login' },
+            { label: 'Dashboard Dosen', href: '/login' },
+            { label: 'Panel Koordinator', href: '/login' },
+            { label: 'Panel Kaprodi', href: '/login' },
+        ],
+        resourceLinks: [
+            { label: 'Panduan Pengguna', href: '/login' },
+            { label: 'FAQ Sistem', href: '/login' },
+            { label: 'Kebijakan Privasi', href: '/login' },
+            { label: 'Syarat Layanan', href: '/login' },
+        ],
+        copyright: 'Copyright 2026 Kavana Bimbingan Online.',
+    },
+};
+
+export const CAMPUS_CONTACT = {
+    address: 'Jl. Sariasih No.54, Sarijadi, Kec. Sukasari, Kota Bandung, Jawa Barat 40151',
+    phone: '+62 851 7993 5117',
+    email: 'support@kavana.my.id',
+    officeHours: 'Senin - Jumat, 08.00 - 16.00 WIB',
+};
+
+export const SOCIAL_PROOF_CONFIG = {
+    showStatistics: false,
+    showTestimonial: false,
+    notice: 'Data statistik dan testimoni dipublikasikan setelah validasi resmi dari program studi.',
+};

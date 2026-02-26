@@ -168,7 +168,7 @@ export default function AdminDashboard() {
       {/* Footer */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[hsl(var(--ctp-overlay0)/0.30)] bg-[hsl(var(--ctp-mantle)/0.35)] px-4 py-3">
         <div className="text-xs text-[hsl(var(--ctp-subtext0))]">Kavana — Admin Panel</div>
-        <div className="text-xs text-[hsl(var(--ctp-subtext0))]">Theme: Catppuccin Mocha</div>
+        <div className="text-xs text-[hsl(var(--ctp-subtext0))]">Mode tema mengikuti preferensi pengguna.</div>
       </div>
     </motion.div>
   );
