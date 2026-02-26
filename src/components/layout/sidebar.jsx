@@ -3,13 +3,53 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GraduationCap, LogOut, Plus, LifeBuoy, Settings } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth-store';
 import { MENU_CONFIG, ROLE_LABEL, ROLE_DASHBOARD_ROUTE } from '@/lib/constants';
+import { kaprodiAPI } from '@/lib/api';
 import { removeAcademicTitles } from '@/lib/validators';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
+
+const KAPRODI_KOORDINATOR_MENU_IDS = new Set([
+  'separator-koordinator',
+  'kelola-periode',
+  'validasi-proposal',
+  'approve-pembimbing',
+  'daftar-mahasiswa',
+  'jadwal-sidang',
+]);
+
+function parseRoles(rawRoles) {
+  if (!rawRoles) return [];
+  if (Array.isArray(rawRoles)) {
+    return rawRoles
+      .map((role) => String(role).trim().toLowerCase())
+      .filter(Boolean);
+  }
+  return String(rawRoles)
+    .split(',')
+    .map((role) => role.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function resolveKaprodiHasKoordinatorRole(user) {
+  if (!user) return null;
+  if (typeof user.is_koordinator === 'boolean') return user.is_koordinator;
+
+  const roles = parseRoles(user.roles);
+  if (roles.length > 0) {
+    return roles.includes('koordinator');
+  }
+
+  return null;
+}
+
+function filterMenuByRole(role, menuItems, hasKoordinatorRole) {
+  if (role !== 'kaprodi' || hasKoordinatorRole) return menuItems;
+  return menuItems.filter((item) => !KAPRODI_KOORDINATOR_MENU_IDS.has(item.id));
+}
 
 function getMenuHref(role, menuId) {
   if (menuId === 'dashboard') return ROLE_DASHBOARD_ROUTE[role];
@@ -21,9 +61,47 @@ function getMenuHref(role, menuId) {
 
 function SidebarContent({ role, collapsed, onToggle, onItemClick }) {
   const pathname = usePathname();
-  const { user, logout } = useAuthStore();
-  const menuItems = MENU_CONFIG[role] || [];
-  const displayName = removeAcademicTitles(user?.nama || 'User');
+  const { user, logout, setUser } = useAuthStore();
+  const [kaprodiRoleFromApi, setKaprodiRoleFromApi] = useState(null);
+  const kaprodiRoleFromStore = resolveKaprodiHasKoordinatorRole(user);
+
+  useEffect(() => {
+    if (role !== 'kaprodi') return;
+
+    let isMounted = true;
+
+    const loadKaprodiProfile = async () => {
+      const result = await kaprodiAPI.getProfile();
+      if (!isMounted) return;
+
+      if (result.ok && result.data) {
+        setUser(result.data);
+        const hasKoordinatorRole = resolveKaprodiHasKoordinatorRole(result.data);
+        setKaprodiRoleFromApi(hasKoordinatorRole ?? false);
+        return;
+      }
+
+      setKaprodiRoleFromApi(false);
+    };
+
+    loadKaprodiProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [role, setUser]);
+
+  const hasKoordinatorRole =
+    role !== 'kaprodi'
+      ? true
+      : (kaprodiRoleFromApi ?? kaprodiRoleFromStore ?? false);
+
+  const menuItems = useMemo(
+    () => filterMenuByRole(role, MENU_CONFIG[role] || [], hasKoordinatorRole),
+    [role, hasKoordinatorRole]
+  );
+  const normalizedName = removeAcademicTitles(user?.nama || 'User');
+  const displayName = normalizedName.split(',')[0]?.trim() || normalizedName;
   const roleLabel = ROLE_LABEL[role] || role;
   const initials = displayName
     .split(' ')
@@ -87,7 +165,7 @@ function SidebarContent({ role, collapsed, onToggle, onItemClick }) {
         )}
 
         {/* Nav Items */}
-        <nav className="flex-1 overflow-y-auto px-2 py-1">
+        <nav className="flex-1 min-h-0 overflow-y-auto px-2 py-1">
           {!collapsed && (
             <div className="px-3 pb-1.5 pt-1 text-[10px] font-medium uppercase tracking-widest text-[hsl(var(--ctp-overlay1))]">
               Menu
@@ -153,7 +231,7 @@ function SidebarContent({ role, collapsed, onToggle, onItemClick }) {
                       isActive ? "text-[hsl(var(--ctp-lavender))]" : "text-[hsl(var(--ctp-overlay1))] group-hover:text-[hsl(var(--ctp-subtext1))]"
                     )} />
                   )}
-                  <span className="flex-1 text-left">{item.label}</span>
+                  <span className="flex-1 min-w-0 truncate text-left" title={item.label}>{item.label}</span>
                   {isActive && (
                     <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--ctp-lavender))]" />
                   )}
@@ -168,7 +246,7 @@ function SidebarContent({ role, collapsed, onToggle, onItemClick }) {
           <div className="mx-2 my-2 h-px bg-[hsl(var(--ctp-surface1))]" />
 
           {/* User info */}
-          <div className={cn('flex items-center gap-3 rounded-xl px-3 py-2 mb-1', collapsed && 'justify-center px-0')}>
+          <div className={cn('flex w-full items-center gap-3 rounded-xl px-3 py-2 mb-1', collapsed && 'justify-center px-0')}>
             <span className={cn(
               "grid shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[hsl(var(--ctp-lavender)/0.25)] to-[hsl(var(--ctp-mauve)/0.20)] border border-[hsl(var(--ctp-lavender)/0.30)] text-sm font-bold text-[hsl(var(--ctp-text))]",
               collapsed ? "h-10 w-10" : "h-9 w-9"
@@ -177,15 +255,15 @@ function SidebarContent({ role, collapsed, onToggle, onItemClick }) {
             </span>
             {!collapsed && (
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-[hsl(var(--ctp-text))] truncate">{displayName}</p>
-                <p className="text-[10px] text-[hsl(var(--ctp-overlay1))]">{roleLabel}</p>
+                <p className="text-sm font-semibold text-[hsl(var(--ctp-text))] truncate" title={displayName}>{displayName}</p>
+                <p className="text-[10px] text-[hsl(var(--ctp-overlay1))] truncate" title={roleLabel}>{roleLabel}</p>
               </div>
             )}
           </div>
 
           <div className={cn("space-y-0.5", collapsed && "flex flex-col items-center")}>
             {[
-              { label: 'Support', icon: LifeBuoy, href: '/dashboard/settings' },
+              { label: 'Support', icon: LifeBuoy, href: '/dashboard/support' },
               { label: 'Settings', icon: Settings, href: '/dashboard/settings' },
             ].map((item) =>
               collapsed ? (

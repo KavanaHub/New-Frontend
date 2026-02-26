@@ -2,324 +2,416 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { ArrowRight, CheckCircle, GraduationCap, Info, Menu, X } from 'lucide-react';
+import {
+  ArrowRight,
+  BookOpenText,
+  CalendarClock,
+  CheckCircle2,
+  ClipboardList,
+  GraduationCap,
+  Menu,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  X,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { CAMPUS_CONTACT, LANDING_CONTENT, SOCIAL_PROOF_CONFIG } from '@/lib/constants';
+
+const ROLE_ICONS = [GraduationCap, Users, ClipboardList, ShieldCheck];
+const STEP_ICONS = [BookOpenText, Sparkles, ClipboardList, CalendarClock, CheckCircle2];
+const EASE_OUT = [0.22, 1, 0.36, 1];
+
+const STAGGER_PARENT = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.08,
+    },
+  },
+};
+
+const FADE_UP = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.62, ease: EASE_OUT },
+  },
+};
+
+const REVEAL_ON_VIEW = {
+  initial: 'hidden',
+  whileInView: 'show',
+  viewport: { once: true, amount: 0.18 },
+  variants: STAGGER_PARENT,
+};
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div id="top" className="min-h-screen bg-[hsl(var(--ctp-base))] text-[hsl(var(--ctp-text))]">
-      <nav className="fixed w-full z-50 bg-[hsl(var(--ctp-base)/0.92)] backdrop-blur-md border-b border-[hsl(var(--ctp-surface1))]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-9 h-9 bg-primary rounded-lg">
-                <GraduationCap className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <span className="text-2xl font-bold font-serif text-[hsl(var(--ctp-text))] tracking-tight">{LANDING_CONTENT.brand.name}</span>
-                <p className="text-xs text-[hsl(var(--ctp-subtext0))] -mt-1">{LANDING_CONTENT.brand.subtitle}</p>
-              </div>
-            </div>
+    <div id="top" className="relative min-h-screen overflow-x-clip bg-[hsl(var(--ctp-base))] text-[hsl(var(--ctp-text))]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(62%_55%_at_8%_0%,hsl(var(--ctp-sky)/0.18),transparent_56%),radial-gradient(48%_50%_at_94%_8%,hsl(var(--ctp-blue)/0.12),transparent_55%),radial-gradient(58%_58%_at_50%_100%,hsl(var(--ctp-teal)/0.12),transparent_58%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--ctp-surface1)/0.35)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--ctp-surface1)/0.35)_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_at_center,black_58%,transparent_88%)]" />
+      <motion.div
+        className="pointer-events-none absolute -left-28 top-28 h-72 w-72 rounded-full bg-[hsl(var(--ctp-blue)/0.22)] blur-3xl"
+        animate={{ x: [0, 16, 0], y: [0, -20, 0], opacity: [0.3, 0.5, 0.3] }}
+        transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
+      />
+      <motion.div
+        className="pointer-events-none absolute -right-24 bottom-16 h-64 w-64 rounded-full bg-[hsl(var(--ctp-teal)/0.24)] blur-3xl"
+        animate={{ x: [0, -14, 0], y: [0, 14, 0], opacity: [0.25, 0.48, 0.25] }}
+        transition={{ duration: 13, ease: 'easeInOut', repeat: Infinity, delay: 0.35 }}
+      />
 
-            <div className="hidden md:flex items-center space-x-8">
-              {LANDING_CONTENT.nav.map((item) => (
-                <a
-                  key={item.label}
-                  className="text-sm font-medium text-[hsl(var(--ctp-subtext1))] hover:text-primary transition-colors"
-                  href={item.href}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
+      <header className="sticky top-0 z-50 border-b border-[hsl(var(--ctp-surface1)/0.85)] bg-[hsl(var(--ctp-base)/0.9)] backdrop-blur-md">
+        <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-3" aria-label="Kavana Home">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[hsl(var(--ctp-blue))] text-white shadow-sm">
+              <GraduationCap className="h-5 w-5" />
+            </span>
+            <span>
+              <span className="block text-2xl font-black leading-none tracking-tight">{LANDING_CONTENT.brand.name}</span>
+              <span className="block text-xs text-[hsl(var(--ctp-subtext0))]">{LANDING_CONTENT.brand.subtitle}</span>
+            </span>
+          </Link>
 
-            <div className="flex items-center gap-4">
-              <Link href="/login" className="hidden md:inline-flex text-sm font-semibold text-[hsl(var(--ctp-subtext1))] hover:text-primary transition-colors">
-                Masuk
-              </Link>
-              <Link href="/register">
-                <Button className="rounded-full px-6 shadow-sm">Daftar</Button>
-              </Link>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                aria-label={mobileMenuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
-                onClick={() => setMobileMenuOpen((prev) => !prev)}
+          <nav className="hidden items-center gap-7 md:flex" aria-label="Navigasi utama">
+            {LANDING_CONTENT.nav.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className="text-sm font-semibold text-[hsl(var(--ctp-subtext1))] transition-colors hover:text-[hsl(var(--ctp-blue))]"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </Button>
-            </div>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              className="hidden text-sm font-semibold text-[hsl(var(--ctp-subtext1))] transition-colors hover:text-[hsl(var(--ctp-blue))] md:inline-flex"
+            >
+              Masuk
+            </Link>
+            <Link href="/register">
+              <Button className="rounded-full px-6 shadow-sm">Daftar</Button>
+            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              aria-label={mobileMenuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
           </div>
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[hsl(var(--ctp-base))] border-t border-[hsl(var(--ctp-surface1))] py-4 px-4 animate-in slide-in-from-top-2">
-            <div className="flex flex-col space-y-4">
+          <motion.nav
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: EASE_OUT }}
+            className="border-t border-[hsl(var(--ctp-surface1)/0.85)] bg-[hsl(var(--ctp-base))] px-4 py-4 md:hidden"
+            aria-label="Navigasi mobile"
+          >
+            <div className="flex flex-col gap-3">
               {LANDING_CONTENT.nav.map((item) => (
                 <a
                   key={item.label}
-                  className="text-base font-medium text-[hsl(var(--ctp-subtext1))] hover:text-primary py-2"
                   href={item.href}
+                  className="rounded-xl px-3 py-2 text-sm font-semibold text-[hsl(var(--ctp-subtext1))] transition-colors hover:bg-[hsl(var(--ctp-surface0)/0.7)] hover:text-[hsl(var(--ctp-blue))]"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.label}
                 </a>
               ))}
-              <hr className="border-[hsl(var(--ctp-surface1))]" />
-              <Link href="/login" className="text-base font-semibold text-primary py-2">Masuk</Link>
-              <Link href="/register">
-                <Button className="w-full rounded-full">Daftar</Button>
+              <Link href="/login" className="rounded-xl px-3 py-2 text-sm font-semibold text-[hsl(var(--ctp-blue))]">
+                Masuk
               </Link>
             </div>
-          </div>
+          </motion.nav>
         )}
-      </nav>
+      </header>
 
-      <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-[hsl(var(--ctp-sapphire))] to-[hsl(var(--ctp-crust))]" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-slate-300/20 rounded-full blur-3xl" />
+      <main className="relative z-10">
+        <motion.section
+          initial="hidden"
+          animate="show"
+          variants={STAGGER_PARENT}
+          className="mx-auto w-full max-w-7xl px-4 pb-16 pt-16 sm:px-6 lg:px-8 lg:pb-24 lg:pt-24"
+        >
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
+            <motion.div variants={STAGGER_PARENT} className="lg:col-span-7">
+              <motion.span variants={FADE_UP} className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--ctp-blue)/0.35)] bg-[hsl(var(--ctp-blue)/0.1)] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[hsl(var(--ctp-blue))]">
+                <Sparkles className="h-3.5 w-3.5" /> {LANDING_CONTENT.hero.badge}
+              </motion.span>
+              <motion.h1 variants={FADE_UP} className="mt-5 max-w-3xl text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+                {LANDING_CONTENT.hero.title}
+              </motion.h1>
+              <motion.p variants={FADE_UP} className="mt-6 max-w-2xl text-base leading-relaxed text-[hsl(var(--ctp-subtext1))] sm:text-lg">
+                {LANDING_CONTENT.hero.description}
+              </motion.p>
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center sm:px-6 lg:px-8 py-20">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white/20 mb-6">
-            <span className="w-2 h-2 bg-emerald-300 rounded-full" />
-            <span className="text-primary-foreground font-semibold tracking-wider uppercase text-xs">
-              {LANDING_CONTENT.hero.badge}
-            </span>
-          </div>
+              <motion.div variants={FADE_UP} className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <Link href={LANDING_CONTENT.hero.primaryCta.href}>
+                  <Button size="lg" className="w-full rounded-full px-8 sm:w-auto">
+                    {LANDING_CONTENT.hero.primaryCta.label}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href={LANDING_CONTENT.hero.secondaryCta.href}>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full rounded-full border-[hsl(var(--ctp-overlay0)/0.6)] bg-[hsl(var(--ctp-base)/0.75)] px-8 text-[hsl(var(--ctp-text))] sm:w-auto"
+                  >
+                    {LANDING_CONTENT.hero.secondaryCta.label}
+                  </Button>
+                </Link>
+              </motion.div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            {LANDING_CONTENT.hero.title}
-          </h1>
+              <motion.div variants={STAGGER_PARENT} className="mt-10 grid gap-3 sm:grid-cols-3">
+                {LANDING_CONTENT.stats.map((stat) => (
+                  <motion.article
+                    key={stat.label}
+                    variants={FADE_UP}
+                    whileHover={{ y: -4, transition: { duration: 0.22 } }}
+                    className="rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust)/0.7)] p-4 shadow-[0_10px_32px_-28px_hsl(var(--ctp-blue)/0.65)]"
+                  >
+                    <p className="text-sm font-bold text-[hsl(var(--ctp-text))]">{stat.value}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-[hsl(var(--ctp-subtext0))]">{stat.label}</p>
+                  </motion.article>
+                ))}
+              </motion.div>
+            </motion.div>
 
-          <p className="mt-4 text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-10 leading-relaxed">
-            {LANDING_CONTENT.hero.description}
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href={LANDING_CONTENT.hero.primaryCta.href}>
-              <Button size="lg" variant="secondary" className="rounded-full px-8 py-6 text-base font-semibold shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
-                {LANDING_CONTENT.hero.primaryCta.label}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-            <Link href={LANDING_CONTENT.hero.secondaryCta.href}>
-              <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-base font-semibold border-2 border-white text-white hover:bg-white hover:text-slate-900 bg-white/10 backdrop-blur-sm">
-                {LANDING_CONTENT.hero.secondaryCta.label}
-              </Button>
-            </Link>
-          </div>
-
-          <div className="mt-16 grid grid-cols-1 gap-4 max-w-4xl mx-auto md:grid-cols-3">
-            {LANDING_CONTENT.stats.map((stat) => (
-              <div key={stat.label} className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-sm p-4 text-left">
-                <div className="text-base md:text-lg font-semibold text-white">{stat.value}</div>
-                <div className="text-sm text-white/85 mt-1">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 md:py-24 bg-[hsl(var(--ctp-base))]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <p className="text-primary font-semibold tracking-wider uppercase mb-2 text-sm">Tentang Platform</p>
-            <h2 className="text-3xl font-bold text-[hsl(var(--ctp-text))] sm:text-4xl mb-4">{LANDING_CONTENT.about.title}</h2>
-            <p className="text-lg text-[hsl(var(--ctp-subtext1))]">{LANDING_CONTENT.about.description}</p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="relative">
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/15 rounded-full blur-xl" />
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-[hsl(var(--ctp-lavender)/0.15)] rounded-full blur-xl" />
-              <div className="relative rounded-2xl overflow-hidden shadow-xl border border-[hsl(var(--ctp-surface1))] aspect-[4/3] bg-gradient-to-br from-primary/5 to-[hsl(var(--ctp-mantle))] flex items-center justify-center">
-                <div className="text-center p-8">
-                  <GraduationCap className="w-20 h-20 text-primary/50 mx-auto mb-4" />
-                  <p className="text-slate-600 text-sm">Portal Bimbingan Program Studi</p>
+            <motion.aside variants={FADE_UP} className="lg:col-span-5">
+              <div className="overflow-hidden rounded-3xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust)/0.75)] shadow-[0_20px_60px_-38px_hsl(var(--ctp-blue)/0.65)]">
+                <div className="border-b border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.55)] px-6 py-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-[hsl(var(--ctp-subtext0))]">Snapshot Akademik</p>
+                  <h2 className="mt-1 text-xl font-bold">Panel Aktivitas Prodi</h2>
                 </div>
+                <motion.div variants={STAGGER_PARENT} className="space-y-4 p-6">
+                  {LANDING_CONTENT.steps.slice(0, 4).map((step) => {
+                    const Icon = STEP_ICONS[step.num - 1] || CheckCircle2;
+                    return (
+                      <motion.div
+                        key={step.num}
+                        variants={FADE_UP}
+                        whileHover={{ x: 4, transition: { duration: 0.2 } }}
+                        className="flex items-start gap-3 rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.68)] p-3"
+                      >
+                        <span className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-[hsl(var(--ctp-blue)/0.14)] text-[hsl(var(--ctp-blue))]">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <div>
+                          <p className="text-sm font-semibold text-[hsl(var(--ctp-text))]">
+                            Tahap {step.num}: {step.title}
+                          </p>
+                          <p className="mt-0.5 text-xs leading-relaxed text-[hsl(var(--ctp-subtext0))]">{step.desc}</p>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
               </div>
-            </div>
+            </motion.aside>
+          </div>
+        </motion.section>
 
-            <div className="bg-[hsl(var(--ctp-crust)/0.72)] p-8 md:p-10 rounded-2xl shadow-lg border border-[hsl(var(--ctp-surface1))] backdrop-blur-sm">
-              <span className="text-primary font-semibold text-sm tracking-wider uppercase mb-2 block">
-                Ringkasan Manfaat
-              </span>
-              <h3 className="text-3xl font-bold text-[hsl(var(--ctp-text))] mb-6">Koordinasi Akademik Lebih Efisien</h3>
-              <ul className="space-y-4">
+        <motion.section {...REVEAL_ON_VIEW} id="features" className="border-y border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-mantle)/0.55)] py-16 md:py-20">
+          <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:px-8">
+            <motion.div variants={FADE_UP} className="lg:col-span-5">
+              <p className="text-xs font-bold uppercase tracking-[0.13em] text-[hsl(var(--ctp-blue))]">Tentang Platform</p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">{LANDING_CONTENT.about.title}</h2>
+              <p className="mt-5 text-sm leading-relaxed text-[hsl(var(--ctp-subtext1))] sm:text-base">{LANDING_CONTENT.about.description}</p>
+              <ul className="mt-6 space-y-3">
                 {LANDING_CONTENT.about.bullets.map((text) => (
-                  <li key={text} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-[hsl(var(--ctp-subtext1))]">{text}</span>
+                  <li key={text} className="flex items-start gap-2 text-sm text-[hsl(var(--ctp-subtext1))]">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 text-[hsl(var(--ctp-blue))]" />
+                    <span>{text}</span>
                   </li>
                 ))}
               </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+            </motion.div>
 
-      <section className="py-20 md:py-24 bg-[hsl(var(--ctp-mantle))]" id="features">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mb-16">
-            <p className="text-primary font-semibold tracking-wider uppercase mb-2 text-sm">Fitur Utama</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-[hsl(var(--ctp-text))] leading-tight">
-              Dukungan untuk Alur Bimbingan Prodi
-            </h2>
+            <motion.div variants={STAGGER_PARENT} className="grid gap-4 sm:grid-cols-2 lg:col-span-7">
+              {LANDING_CONTENT.features.map((feature) => (
+                <motion.article
+                  key={feature.num}
+                  variants={FADE_UP}
+                  whileHover={{ y: -6, scale: 1.01, transition: { duration: 0.22 } }}
+                  className="group relative overflow-hidden rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.7)] p-5"
+                >
+                  <div className={`absolute left-0 top-0 h-1.5 w-full bg-gradient-to-r ${feature.color}`} />
+                  <span className="text-5xl font-black text-[hsl(var(--ctp-surface1))]">{feature.num}</span>
+                  <h3 className="mt-2 text-lg font-bold">{feature.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[hsl(var(--ctp-subtext1))]">{feature.desc}</p>
+                </motion.article>
+              ))}
+            </motion.div>
           </div>
+        </motion.section>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {LANDING_CONTENT.features.map((feature) => (
-              <div key={feature.num} className="group relative bg-[hsl(var(--ctp-crust)/0.78)] rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-[hsl(var(--ctp-surface1))] backdrop-blur-sm">
-                <div className={`h-2 bg-gradient-to-r ${feature.color}`} />
-                <div className="p-6 pt-5">
-                  <div className="text-5xl font-bold text-slate-100 absolute top-8 right-4 pointer-events-none">
-                    {feature.num}
-                  </div>
-                  <h3 className="text-xl font-bold text-[hsl(var(--ctp-text))] mb-2 relative z-10">{feature.title}</h3>
-                  <p className="text-[hsl(var(--ctp-subtext1))] text-sm relative z-10">{feature.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 md:py-24 bg-[hsl(var(--ctp-base))]" id="roles">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-primary font-semibold tracking-wider uppercase mb-2 text-sm">Peran Pengguna</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-[hsl(var(--ctp-text))]">Satu Platform, Multi-Role</h2>
-            <p className="text-lg text-[hsl(var(--ctp-subtext1))] mt-4 max-w-2xl mx-auto">
-              Fitur ditata sesuai kebutuhan setiap peran dalam proses akademik.
+        <motion.section {...REVEAL_ON_VIEW} id="roles" className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+          <motion.div variants={FADE_UP} className="mx-auto max-w-3xl text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.13em] text-[hsl(var(--ctp-blue))]">Peran Pengguna</p>
+            <h2 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Satu Ekosistem, Kewenangan Jelas</h2>
+            <p className="mt-4 text-sm leading-relaxed text-[hsl(var(--ctp-subtext1))] sm:text-base">
+              Antarmuka dan data ditampilkan sesuai peran agar keputusan akademik lebih akurat dan koordinasi lebih cepat.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {LANDING_CONTENT.roles.map((role) => (
-              <div key={role.letter} className="bg-[hsl(var(--ctp-crust)/0.75)] p-6 rounded-2xl shadow-md border border-[hsl(var(--ctp-surface1))] hover:shadow-lg hover:-translate-y-1 transition-all backdrop-blur-sm">
-                <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${role.gradient} flex items-center justify-center text-white text-2xl font-bold mb-4`}>
-                  {role.letter}
-                </div>
-                <h3 className="text-xl font-bold text-[hsl(var(--ctp-text))] mb-2">{role.title}</h3>
-                <p className="text-[hsl(var(--ctp-subtext1))] text-sm">{role.desc}</p>
+          <motion.div variants={STAGGER_PARENT} className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {LANDING_CONTENT.roles.map((role, index) => {
+              const Icon = ROLE_ICONS[index] || Users;
+              return (
+                <motion.article
+                  key={role.letter}
+                  variants={FADE_UP}
+                  whileHover={{ y: -6, transition: { duration: 0.22 } }}
+                  className="rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust)/0.72)] p-5"
+                >
+                  <span className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${role.gradient} text-white`}>
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-4 text-lg font-bold">{role.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[hsl(var(--ctp-subtext1))]">{role.desc}</p>
+                </motion.article>
+              );
+            })}
+          </motion.div>
+        </motion.section>
+
+        <motion.section {...REVEAL_ON_VIEW} id="how" className="bg-[hsl(var(--ctp-mantle)/0.55)] py-16 md:py-20">
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <motion.div variants={FADE_UP} className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.13em] text-[hsl(var(--ctp-blue))]">Alur Sistem</p>
+                <h2 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Tahapan Operasional yang Terdokumentasi</h2>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 md:py-24 bg-gradient-to-br from-primary to-[hsl(var(--ctp-crust))]" id="how">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-white/90 font-semibold tracking-wider uppercase mb-2 text-sm">Alur Sistem</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white">Tahapan Proses Bimbingan</h2>
-            <p className="text-lg text-white/90 mt-4 max-w-2xl mx-auto">
-              Proses dirancang agar setiap tahap terdokumentasi dan mudah dipantau.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-5 gap-6">
-            {LANDING_CONTENT.steps.map((step) => (
-              <div key={step.num} className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20 text-center hover:bg-white/15 transition-all">
-                <div className="w-12 h-12 rounded-full bg-white text-primary font-bold text-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  {step.num}
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                <p className="text-white/90 text-sm">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="relative bg-[hsl(var(--ctp-mantle))] py-20 md:py-24 overflow-hidden">
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-[hsl(var(--ctp-lavender)/0.15)] blur-3xl" />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="bg-gradient-to-br from-primary to-[hsl(var(--ctp-crust))] rounded-3xl shadow-2xl p-8 md:p-12 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{LANDING_CONTENT.cta.title}</h2>
-            <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">{LANDING_CONTENT.cta.description}</p>
-            <Link href={LANDING_CONTENT.cta.button.href}>
-              <Button size="lg" variant="secondary" className="rounded-full px-8 py-6 text-base font-bold shadow-lg">
-                {LANDING_CONTENT.cta.button.label}
-              </Button>
-            </Link>
-
-            <div className="mt-8 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 text-left">
-              <div className="flex items-start gap-3 text-white/95">
-                <Info className="w-4 h-4 mt-0.5 shrink-0" />
-                <p className="text-sm">{SOCIAL_PROOF_CONFIG.notice}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="bg-slate-900 text-white pt-20 pb-10 border-t border-slate-800" id="contact">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-            <div>
-              <div className="flex items-center gap-2 mb-6">
-                <div className="flex items-center justify-center w-9 h-9 bg-primary rounded-lg">
-                  <GraduationCap className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-2xl font-bold">{LANDING_CONTENT.brand.name}</span>
-              </div>
-              <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-                Platform digital untuk mendukung proses bimbingan akademik di lingkungan program studi.
+              <p className="max-w-xl text-sm leading-relaxed text-[hsl(var(--ctp-subtext1))]">
+                Setiap tahap meninggalkan jejak data yang bisa diverifikasi, dari pendaftaran hingga finalisasi.
               </p>
-            </div>
+            </motion.div>
 
-            <div>
-              <h4 className="text-lg font-bold mb-6">Platform</h4>
-              <ul className="space-y-3 text-slate-300 text-sm">
-                {LANDING_CONTENT.footer.platformLinks.map((link) => (
-                  <li key={link.label}>
-                    <Link className="hover:text-primary transition-colors" href={link.href}>{link.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-bold mb-6">Sumber Daya</h4>
-              <ul className="space-y-3 text-slate-300 text-sm">
-                {LANDING_CONTENT.footer.resourceLinks.map((link) => (
-                  <li key={link.label}>
-                    <Link className="hover:text-primary transition-colors" href={link.href}>{link.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-bold mb-6">Hubungi Kami</h4>
-              <ul className="space-y-4 text-slate-300 text-sm">
-                <li>{CAMPUS_CONTACT.address}</li>
-                <li>{CAMPUS_CONTACT.phone}</li>
-                <li>{CAMPUS_CONTACT.email}</li>
-                <li>{CAMPUS_CONTACT.officeHours}</li>
-              </ul>
-            </div>
+            <motion.div variants={STAGGER_PARENT} className="mt-10 grid gap-4 md:grid-cols-5">
+              {LANDING_CONTENT.steps.map((step, index) => {
+                const Icon = STEP_ICONS[index] || CheckCircle2;
+                return (
+                  <motion.article
+                    key={step.num}
+                    variants={FADE_UP}
+                    whileHover={{ y: -5, transition: { duration: 0.22 } }}
+                    className="relative rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.72)] p-5"
+                  >
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[hsl(var(--ctp-blue)/0.12)] text-[hsl(var(--ctp-blue))]">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <h3 className="mt-3 text-base font-bold">{step.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-[hsl(var(--ctp-subtext1))]">{step.desc}</p>
+                    <span className="mt-3 inline-block rounded-full bg-[hsl(var(--ctp-surface0))] px-2.5 py-1 text-xs font-semibold text-[hsl(var(--ctp-subtext0))]">
+                      Tahap {step.num}
+                    </span>
+                  </motion.article>
+                );
+              })}
+            </motion.div>
           </div>
+        </motion.section>
 
-          <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-300 text-sm text-center md:text-left mb-4 md:mb-0">
-              {LANDING_CONTENT.footer.copyright}
+        <motion.section {...REVEAL_ON_VIEW} className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+          <motion.div
+            variants={FADE_UP}
+            whileHover={{ scale: 1.01, transition: { duration: 0.25 } }}
+            className="rounded-3xl border border-[hsl(var(--ctp-surface1))] bg-[linear-gradient(140deg,hsl(var(--ctp-blue)/0.95),hsl(var(--ctp-sapphire)/0.94))] px-6 py-10 text-white shadow-[0_24px_80px_-40px_hsl(var(--ctp-blue)/0.9)] md:px-10 md:py-12"
+          >
+            <div className="grid items-center gap-6 lg:grid-cols-12">
+              <div className="lg:col-span-8">
+                <h2 className="text-3xl font-black tracking-tight sm:text-4xl">{LANDING_CONTENT.cta.title}</h2>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/90 sm:text-base">
+                  {LANDING_CONTENT.cta.description}
+                </p>
+              </div>
+              <div className="lg:col-span-4 lg:text-right">
+                <Link href={LANDING_CONTENT.cta.button.href}>
+                  <Button size="lg" variant="secondary" className="w-full rounded-full px-8 font-bold lg:w-auto">
+                    {LANDING_CONTENT.cta.button.label}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="mt-6 rounded-2xl border border-white/25 bg-white/10 px-4 py-3 text-sm text-white/95">
+              {SOCIAL_PROOF_CONFIG.notice}
+            </div>
+          </motion.div>
+        </motion.section>
+      </main>
+
+      <motion.footer {...REVEAL_ON_VIEW} id="contact" className="border-t border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust)/0.68)]">
+        <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
+          <motion.div variants={FADE_UP}>
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[hsl(var(--ctp-blue))] text-white">
+                <GraduationCap className="h-4.5 w-4.5" />
+              </span>
+              <span className="text-2xl font-black tracking-tight">{LANDING_CONTENT.brand.name}</span>
+            </div>
+            <p className="mt-4 text-sm leading-relaxed text-[hsl(var(--ctp-subtext1))]">
+              Platform digital untuk proses bimbingan akademik yang lebih terukur, terdokumentasi, dan akuntabel.
             </p>
-            <div className="flex space-x-6 text-sm text-slate-300">
-              <Link className="hover:text-white transition-colors" href="/login">Kebijakan Privasi</Link>
-              <Link className="hover:text-white transition-colors" href="/login">Syarat Layanan</Link>
-            </div>
-          </div>
+          </motion.div>
+
+          <motion.div variants={FADE_UP}>
+            <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-[hsl(var(--ctp-subtext0))]">Platform</h3>
+            <ul className="mt-4 space-y-2 text-sm text-[hsl(var(--ctp-subtext1))]">
+              {LANDING_CONTENT.footer.platformLinks.map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className="transition-colors hover:text-[hsl(var(--ctp-blue))]">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div variants={FADE_UP}>
+            <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-[hsl(var(--ctp-subtext0))]">Sumber Daya</h3>
+            <ul className="mt-4 space-y-2 text-sm text-[hsl(var(--ctp-subtext1))]">
+              {LANDING_CONTENT.footer.resourceLinks.map((item) => (
+                <li key={item.label}>
+                  <Link href={item.href} className="transition-colors hover:text-[hsl(var(--ctp-blue))]">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div variants={FADE_UP}>
+            <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-[hsl(var(--ctp-subtext0))]">Kontak</h3>
+            <ul className="mt-4 space-y-2 text-sm leading-relaxed text-[hsl(var(--ctp-subtext1))]">
+              <li>{CAMPUS_CONTACT.address}</li>
+              <li>{CAMPUS_CONTACT.phone}</li>
+              <li>{CAMPUS_CONTACT.email}</li>
+              <li>{CAMPUS_CONTACT.officeHours}</li>
+            </ul>
+          </motion.div>
         </div>
-      </footer>
+
+        <div className="border-t border-[hsl(var(--ctp-surface1))] px-4 py-5 text-center text-sm text-[hsl(var(--ctp-subtext0))]">
+          {LANDING_CONTENT.footer.copyright}
+        </div>
+      </motion.footer>
     </div>
   );
 }

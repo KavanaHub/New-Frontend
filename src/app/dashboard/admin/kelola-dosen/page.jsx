@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/store/auth-store';
 import { adminAPI } from '@/lib/api';
+import { DashboardDialog } from '@/components/shared/dashboard-dialog';
 
 function getInitials(n) { return (n||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
 
@@ -79,22 +80,18 @@ export default function KelolaDosenPage() {
         </CardContent>
       </Card>
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowModal(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md mx-4 rounded-2xl border border-[hsl(var(--ctp-overlay0)/0.45)] bg-[hsl(var(--ctp-base))] p-6" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-[hsl(var(--ctp-text))] mb-4">Tambah Dosen</h3>
-            <form onSubmit={handleCreate} className="space-y-3">
-              <div><Label className="text-[hsl(var(--ctp-subtext1))]">Nama</Label><Input value={form.nama} onChange={e => setForm({...form, nama: e.target.value})} className={inputCls} /></div>
-              <div><Label className="text-[hsl(var(--ctp-subtext1))]">Email</Label><Input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className={inputCls} /></div>
-              <div><Label className="text-[hsl(var(--ctp-subtext1))]">Password</Label><Input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} className={inputCls} /></div>
-              <div className="flex justify-end gap-3 pt-2">
-                <Button type="button" onClick={() => setShowModal(false)} className="rounded-2xl bg-[hsl(var(--ctp-surface1)/0.35)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-overlay0)/0.35)]">Batal</Button>
-                <Button type="submit" className="rounded-2xl bg-[hsl(var(--ctp-green)/0.20)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-green)/0.35)]">Tambah</Button>
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
+      <DashboardDialog open={showModal} onOpenChange={setShowModal}>
+        <h3 className="text-lg font-semibold text-[hsl(var(--ctp-text))] mb-4">Tambah Dosen</h3>
+        <form onSubmit={handleCreate} className="space-y-3">
+          <div><Label className="text-[hsl(var(--ctp-subtext1))]">Nama</Label><Input value={form.nama} onChange={e => setForm({...form, nama: e.target.value})} className={inputCls} /></div>
+          <div><Label className="text-[hsl(var(--ctp-subtext1))]">Email</Label><Input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className={inputCls} /></div>
+          <div><Label className="text-[hsl(var(--ctp-subtext1))]">Password</Label><Input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} className={inputCls} /></div>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button type="button" onClick={() => setShowModal(false)} className="rounded-2xl bg-[hsl(var(--ctp-surface1)/0.35)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-overlay0)/0.35)]">Batal</Button>
+            <Button type="submit" className="rounded-2xl bg-[hsl(var(--ctp-green)/0.20)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-green)/0.35)]">Tambah</Button>
+          </div>
+        </form>
+      </DashboardDialog>
     </motion.div>
   );
 }

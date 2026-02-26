@@ -11,6 +11,11 @@ import { useAuthStore } from '@/store/auth-store';
 import { kaprodiAPI } from '@/lib/api';
 
 function getInitials(n) { return (n||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+function getMahasiswaCount(d) {
+  const raw = d?.mahasiswa_count ?? d?.jumlah_bimbingan ?? 0;
+  const count = Number(raw);
+  return Number.isFinite(count) ? count : 0;
+}
 
 export default function DaftarDosenPage() {
   const router = useRouter();
@@ -22,7 +27,7 @@ export default function DaftarDosenPage() {
   useEffect(() => {
     if (role && role !== 'kaprodi') { router.replace(`/dashboard/${role}`); return; }
     loadData();
-  }, [role]);
+  }, [role, router]);
 
   const loadData = async () => {
     try {
@@ -40,7 +45,7 @@ export default function DaftarDosenPage() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card className="bg-[hsl(var(--ctp-surface0)/0.55)] border-[hsl(var(--ctp-overlay0)/0.45)] ctp-ring"><CardContent className="pt-6"><p className="text-xs text-[hsl(var(--ctp-subtext0))]">Total Dosen</p><p className="text-2xl font-bold text-[hsl(var(--ctp-text))]">{list.length}</p></CardContent></Card>
-        <Card className="bg-[hsl(var(--ctp-surface0)/0.55)] border-[hsl(var(--ctp-overlay0)/0.45)] ctp-ring"><CardContent className="pt-6"><p className="text-xs text-[hsl(var(--ctp-subtext0))]">Aktif Membimbing</p><p className="text-2xl font-bold text-[hsl(var(--ctp-green))]">{list.filter(d => d.jumlah_bimbingan > 0).length}</p></CardContent></Card>
+        <Card className="bg-[hsl(var(--ctp-surface0)/0.55)] border-[hsl(var(--ctp-overlay0)/0.45)] ctp-ring"><CardContent className="pt-6"><p className="text-xs text-[hsl(var(--ctp-subtext0))]">Aktif Membimbing</p><p className="text-2xl font-bold text-[hsl(var(--ctp-green))]">{list.filter(d => getMahasiswaCount(d) > 0).length}</p></CardContent></Card>
       </div>
 
       <Card className="bg-[hsl(var(--ctp-surface0)/0.55)] border-[hsl(var(--ctp-overlay0)/0.45)] ctp-ring">
@@ -57,7 +62,7 @@ export default function DaftarDosenPage() {
                 <div key={d.id || i} className="flex items-center gap-3 rounded-2xl border border-[hsl(var(--ctp-overlay0)/0.35)] bg-[hsl(var(--ctp-mantle)/0.35)] p-3">
                   <div className="h-10 w-10 rounded-full bg-[hsl(var(--ctp-blue)/0.20)] text-[hsl(var(--ctp-blue))] flex items-center justify-center text-sm font-bold">{getInitials(d.nama)}</div>
                   <div className="flex-1"><p className="text-sm font-semibold text-[hsl(var(--ctp-text))]">{d.nama || '-'}</p><p className="text-xs text-[hsl(var(--ctp-subtext0))]">{d.email || '-'}</p></div>
-                  <Badge className="rounded-xl bg-[hsl(var(--ctp-surface1)/0.35)] text-[hsl(var(--ctp-subtext1))] border border-[hsl(var(--ctp-overlay0)/0.35)]">{d.jumlah_bimbingan || 0} mhs</Badge>
+                  <Badge className="rounded-xl bg-[hsl(var(--ctp-surface1)/0.35)] text-[hsl(var(--ctp-subtext1))] border border-[hsl(var(--ctp-overlay0)/0.35)]">{getMahasiswaCount(d)} mhs</Badge>
                 </div>
               ))}
             </div>

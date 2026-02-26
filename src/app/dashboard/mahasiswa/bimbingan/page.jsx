@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { useAuthStore } from '@/store/auth-store';
 import { mahasiswaAPI } from '@/lib/api';
+import { DashboardDialog } from '@/components/shared/dashboard-dialog';
 
 const MAX_SESSIONS = 8;
 const STATUS_MAP = {
@@ -180,42 +181,33 @@ export default function BimbinganPage() {
       </Card>
 
       {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowModal(false)}>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md mx-4 rounded-2xl border border-[hsl(var(--ctp-overlay0)/0.45)] bg-[hsl(var(--ctp-base))] p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-semibold text-[hsl(var(--ctp-text))] mb-4">
-              {editIdx >= 0 ? `Edit Bimbingan ke-${editIdx + 1}` : `Tambah Bimbingan ke-${sessions.length + 1}`}
-            </h3>
-            <div className="space-y-3">
-              <div>
-                <Label className="text-[hsl(var(--ctp-subtext1))]">Tanggal</Label>
-                <Input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className="bg-[hsl(var(--ctp-mantle)/0.5)] border-[hsl(var(--ctp-overlay0)/0.45)] text-[hsl(var(--ctp-text))]" />
-              </div>
-              <div>
-                <Label className="text-[hsl(var(--ctp-subtext1))]">Topik / Kegiatan</Label>
-                <Input value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} placeholder="Topik pembahasan" className="bg-[hsl(var(--ctp-mantle)/0.5)] border-[hsl(var(--ctp-overlay0)/0.45)] text-[hsl(var(--ctp-text))]" />
-              </div>
-              <div>
-                <Label className="text-[hsl(var(--ctp-subtext1))]">Catatan</Label>
-                <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Catatan bimbingan" rows={3} className="bg-[hsl(var(--ctp-mantle)/0.5)] border-[hsl(var(--ctp-overlay0)/0.45)] text-[hsl(var(--ctp-text))]" />
-              </div>
-            </div>
-            <div className="flex justify-end gap-3 mt-5">
-              <Button variant="secondary" onClick={() => setShowModal(false)} className="rounded-2xl bg-[hsl(var(--ctp-surface1)/0.35)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-overlay0)/0.35)]">
-                Batal
-              </Button>
-              <Button onClick={handleSubmit} className="rounded-2xl bg-[hsl(var(--ctp-lavender)/0.20)] text-[hsl(var(--ctp-text))] hover:bg-[hsl(var(--ctp-lavender)/0.30)] border border-[hsl(var(--ctp-lavender)/0.35)]">
-                Simpan
-              </Button>
-            </div>
-          </motion.div>
+      <DashboardDialog open={showModal} onOpenChange={setShowModal}>
+        <h3 className="text-lg font-semibold text-[hsl(var(--ctp-text))] mb-4">
+          {editIdx >= 0 ? `Edit Bimbingan ke-${editIdx + 1}` : `Tambah Bimbingan ke-${sessions.length + 1}`}
+        </h3>
+        <div className="space-y-3">
+          <div>
+            <Label className="text-[hsl(var(--ctp-subtext1))]">Tanggal</Label>
+            <Input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className="bg-[hsl(var(--ctp-mantle)/0.5)] border-[hsl(var(--ctp-overlay0)/0.45)] text-[hsl(var(--ctp-text))]" />
+          </div>
+          <div>
+            <Label className="text-[hsl(var(--ctp-subtext1))]">Topik / Kegiatan</Label>
+            <Input value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} placeholder="Topik pembahasan" className="bg-[hsl(var(--ctp-mantle)/0.5)] border-[hsl(var(--ctp-overlay0)/0.45)] text-[hsl(var(--ctp-text))]" />
+          </div>
+          <div>
+            <Label className="text-[hsl(var(--ctp-subtext1))]">Catatan</Label>
+            <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Catatan bimbingan" rows={3} className="bg-[hsl(var(--ctp-mantle)/0.5)] border-[hsl(var(--ctp-overlay0)/0.45)] text-[hsl(var(--ctp-text))]" />
+          </div>
         </div>
-      )}
+        <div className="flex justify-end gap-3 mt-5">
+          <Button variant="secondary" onClick={() => setShowModal(false)} className="rounded-2xl bg-[hsl(var(--ctp-surface1)/0.35)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-overlay0)/0.35)]">
+            Batal
+          </Button>
+          <Button onClick={handleSubmit} className="rounded-2xl bg-[hsl(var(--ctp-lavender)/0.20)] text-[hsl(var(--ctp-text))] hover:bg-[hsl(var(--ctp-lavender)/0.30)] border border-[hsl(var(--ctp-lavender)/0.35)]">
+            Simpan
+          </Button>
+        </div>
+      </DashboardDialog>
     </motion.div>
   );
 }

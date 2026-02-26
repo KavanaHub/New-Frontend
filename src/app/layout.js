@@ -1,21 +1,8 @@
-import { JetBrains_Mono, Merriweather, Plus_Jakarta_Sans } from 'next/font/google';
+import { JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/providers';
 
-const jakartaSans = Plus_Jakarta_Sans({
-  variable: '--font-jakarta',
-  subsets: ['latin'],
-  display: 'swap',
-});
-
-const displaySerif = Merriweather({
-  variable: '--font-display',
-  subsets: ['latin'],
-  weight: ['400', '700', '900'],
-  display: 'swap',
-});
-
-const dashboardSans = JetBrains_Mono({
+const jetBrains = JetBrains_Mono({
   variable: '--font-dashboard',
   subsets: ['latin'],
   display: 'swap',
@@ -53,7 +40,7 @@ const themeScript = `
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="id" className={`${jakartaSans.variable} ${displaySerif.variable} ${dashboardSans.variable} scroll-smooth`} suppressHydrationWarning>
+    <html lang="id" className={`${jetBrains.variable} scroll-smooth`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

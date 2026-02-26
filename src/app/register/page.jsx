@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { authAPI } from '@/lib/api';
@@ -114,9 +115,9 @@ export default function RegisterPage() {
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
-  const handleCheckbox = (field) => (e) => {
-    setFormData((prev) => ({ ...prev, [field]: e.target.checked }));
-    setErrors((prev) => ({ ...prev, [field]: '' }));
+  const handleTermsChange = (checked) => {
+    setFormData((prev) => ({ ...prev, terms: checked === true }));
+    setErrors((prev) => ({ ...prev, terms: '' }));
   };
 
   const validate = () => {
@@ -391,9 +392,11 @@ export default function RegisterPage() {
                   {/* Terms */}
                   <div className="space-y-1">
                     <div className="flex items-start gap-2.5">
-                      <input
-                        type="checkbox" id="terms" checked={formData.terms} onChange={handleCheckbox('terms')}
-                        className="mt-1 h-4 w-4 rounded border-[hsl(var(--ctp-overlay0)/0.5)] bg-[hsl(var(--ctp-surface0)/0.4)] accent-[hsl(var(--ctp-lavender))]"
+                      <Checkbox
+                        id="terms"
+                        checked={formData.terms}
+                        onCheckedChange={handleTermsChange}
+                        className="mt-1 border-[hsl(var(--ctp-overlay0)/0.5)] data-[state=checked]:bg-[hsl(var(--ctp-lavender))] data-[state=checked]:border-[hsl(var(--ctp-lavender))]"
                       />
                       <label htmlFor="terms" className="text-xs text-[hsl(var(--ctp-subtext0))] leading-relaxed">
                         Saya menyetujui syarat dan ketentuan serta kebijakan privasi platform.

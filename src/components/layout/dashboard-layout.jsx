@@ -2,12 +2,12 @@
 
 import { useCallback, useMemo, useState, useSyncExternalStore, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Bell, ChevronDown, Moon, Sun, User, Settings, LogOut, CalendarDays, Maximize2, Minimize2 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { DesktopSidebar, MobileSidebar } from '@/components/layout/sidebar';
 import { AuthGuard } from '@/components/auth/auth-guard';
 import { TITLE_MAP, ROLE_LABEL, ROLE_DASHBOARD_ROUTE } from '@/lib/constants';
+import { notificationAPI } from '@/lib/api';
 import { removeAcademicTitles } from '@/lib/validators';
 import { Button } from '@/components/ui/button';
 import {
@@ -93,6 +93,30 @@ function useIsHydrated() {
   );
 }
 
+const NOTIFICATION_LABELS = {
+  'mahasiswa-bimbingan': 'Bimbingan menunggu persetujuan',
+  'laporan-approve': 'Laporan sidang menunggu review',
+  'validasi-proposal': 'Proposal menunggu validasi',
+  'approve-pembimbing': 'Mahasiswa belum di-assign pembimbing',
+  proposal: 'Proposal perlu revisi',
+  laporan: 'Laporan perlu revisi',
+};
+
+function getNotificationHref(role, menuId) {
+  const rolePrefix = ROLE_DASHBOARD_ROUTE[role];
+  if (!rolePrefix) return null;
+  if (menuId === 'profile') return '/dashboard/profile';
+  if (menuId === 'settings') return '/dashboard/settings';
+  return `${rolePrefix}/${menuId}`;
+}
+
+function formatNotificationKey(key) {
+  return key
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
 export function DashboardLayout({ children, allowedRoles = [] }) {
   const role = useAuthStore((s) => s.role);
   const user = useAuthStore((s) => s.user);
@@ -106,6 +130,9 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
   const { isFull, toggle: toggleFullscreen } = useFullscreen();
   const todayDate = useFormattedDate();
   const isHydrated = useIsHydrated();
+  const [notificationStats, setNotificationStats] = useState({});
+  const [isNotificationLoading, setIsNotificationLoading] = useState(false);
+  const [notificationError, setNotificationError] = useState('');
 
   const pageTitle = useMemo(() => {
     const segments = pathname.split('/').filter(Boolean);
@@ -113,14 +140,61 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
     return TITLE_MAP[lastSegment] || 'Dashboard';
   }, [pathname]);
 
+  const loadNotificationStats = useCallback(
+    async ({ silent = false } = {}) => {
+      if (!currentRole) return;
+      if (!silent) setIsNotificationLoading(true);
+      setNotificationError('');
+
+      const result = await notificationAPI.getStats();
+
+      if (result.ok && result.data && typeof result.data === 'object') {
+        setNotificationStats(result.data);
+      } else if (!silent) {
+        setNotificationError(result.error || 'Gagal memuat notifikasi');
+      }
+
+      if (!silent) setIsNotificationLoading(false);
+    },
+    [currentRole]
+  );
+
+  useEffect(() => {
+    if (!currentRole) return;
+    const initialFetch = setTimeout(() => loadNotificationStats(), 0);
+    const interval = setInterval(() => loadNotificationStats({ silent: true }), 60000);
+    return () => {
+      clearTimeout(initialFetch);
+      clearInterval(interval);
+    };
+  }, [currentRole, loadNotificationStats]);
+
+  const notificationItems = useMemo(() => {
+    return Object.entries(notificationStats)
+      .map(([key, value]) => ({
+        key,
+        count: Number(value) || 0,
+        label: NOTIFICATION_LABELS[key] || formatNotificationKey(key),
+        href: getNotificationHref(currentRole, key),
+      }))
+      .filter((item) => item.count > 0)
+      .sort((a, b) => b.count - a.count);
+  }, [notificationStats, currentRole]);
+
+  const totalNotifications = useMemo(
+    () => notificationItems.reduce((sum, item) => sum + item.count, 0),
+    [notificationItems]
+  );
+
   const handleLogout = () => {
     logout();
     window.location.href = '/login';
   };
 
-  const ThemeIcon = theme === 'dark' ? Moon : Sun;
+  const displayedTheme = isHydrated ? theme : 'light';
+  const ThemeIcon = displayedTheme === 'dark' ? Moon : Sun;
   const nextTheme = theme === 'dark' ? 'light' : 'dark';
-  const themeLabel = theme === 'dark' ? 'Dark' : 'Light';
+  const themeLabel = displayedTheme === 'dark' ? 'Dark' : 'Light';
 
   return (
     <AuthGuard allowedRoles={allowedRoles}>
@@ -196,8 +270,8 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
                     </Tooltip>
 
                     {/* Notifications */}
-                    <Tooltip>
-                      <TooltipTrigger asChild>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -205,13 +279,62 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
                           aria-label="Notifications"
                         >
                           <Bell className="h-4 w-4 text-[hsl(var(--ctp-subtext1))]" />
-                          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[hsl(var(--ctp-red))] ring-2 ring-[hsl(var(--ctp-mantle))]" />
+                          {totalNotifications > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-[hsl(var(--ctp-red))] text-[10px] font-bold text-white leading-4 text-center">
+                              {totalNotifications > 99 ? '99+' : totalNotifications}
+                            </span>
+                          )}
                         </Button>
-                      </TooltipTrigger>
-                      <TooltipContent className="rounded-xl border-[hsl(var(--ctp-overlay0)/0.35)] bg-[hsl(var(--ctp-surface0))] text-[hsl(var(--ctp-text))]">
-                        <p className="text-xs">Notifikasi</p>
-                      </TooltipContent>
-                    </Tooltip>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-80 rounded-xl border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust))] backdrop-blur-lg p-1 shadow-lg"
+                      >
+                        <DropdownMenuLabel className="px-3 py-2 flex items-center justify-between">
+                          <span className="text-sm font-semibold text-[hsl(var(--ctp-text))]">Notifikasi</span>
+                          <span className="text-xs text-[hsl(var(--ctp-subtext0))]">{totalNotifications} belum selesai</span>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-[hsl(var(--ctp-overlay0)/0.25)]" />
+
+                        {isNotificationLoading ? (
+                          <div className="px-3 py-4 text-sm text-[hsl(var(--ctp-subtext0))]">Memuat notifikasi...</div>
+                        ) : null}
+
+                        {!isNotificationLoading && notificationItems.length === 0 ? (
+                          <div className="px-3 py-4 text-sm text-[hsl(var(--ctp-subtext0))]">Tidak ada notifikasi baru.</div>
+                        ) : null}
+
+                        {!isNotificationLoading && notificationItems.map((item) => (
+                          <DropdownMenuItem
+                            key={item.key}
+                            className="rounded-lg px-3 py-2 text-sm text-[hsl(var(--ctp-text))] focus:bg-[hsl(var(--ctp-surface0)/0.50)] cursor-pointer"
+                            onClick={() => item.href && router.push(item.href)}
+                          >
+                            <div className="flex w-full items-center justify-between gap-3">
+                              <span className="line-clamp-2">{item.label}</span>
+                              <span className="inline-flex items-center justify-center min-w-6 h-6 px-1.5 rounded-md bg-[hsl(var(--ctp-red)/0.15)] text-[hsl(var(--ctp-red))] text-xs font-semibold">
+                                {item.count}
+                              </span>
+                            </div>
+                          </DropdownMenuItem>
+                        ))}
+
+                        {notificationError ? (
+                          <>
+                            <DropdownMenuSeparator className="bg-[hsl(var(--ctp-overlay0)/0.25)]" />
+                            <div className="px-3 py-2 text-xs text-[hsl(var(--ctp-red))]">{notificationError}</div>
+                          </>
+                        ) : null}
+
+                        <DropdownMenuSeparator className="bg-[hsl(var(--ctp-overlay0)/0.25)]" />
+                        <DropdownMenuItem
+                          className="rounded-lg px-3 py-2 text-sm text-[hsl(var(--ctp-subtext1))] focus:bg-[hsl(var(--ctp-surface0)/0.50)] cursor-pointer"
+                          onClick={() => loadNotificationStats()}
+                        >
+                          Muat ulang notifikasi
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
 
                     {/* User dropdown */}
                     <DropdownMenu>

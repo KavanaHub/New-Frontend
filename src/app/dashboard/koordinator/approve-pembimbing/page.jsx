@@ -8,8 +8,16 @@ import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useAuthStore } from '@/store/auth-store';
 import { koordinatorAPI } from '@/lib/api';
+import { DashboardDialog } from '@/components/shared/dashboard-dialog';
 
 function getInitials(n) { return (n||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
 
@@ -79,21 +87,25 @@ export default function ApprovePembimbingPage() {
         </CardContent>
       </Card>
 
-      {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setModal(null)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md mx-4 rounded-2xl border border-[hsl(var(--ctp-overlay0)/0.45)] bg-[hsl(var(--ctp-base))] p-6" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-[hsl(var(--ctp-text))] mb-3">Pilih Dosen Pembimbing</h3>
-            <select value={selectedDosen} onChange={e => setSelectedDosen(e.target.value)} className="w-full h-10 px-3 rounded-md text-sm bg-[hsl(var(--ctp-mantle)/0.5)] border border-[hsl(var(--ctp-overlay0)/0.45)] text-[hsl(var(--ctp-text))]">
-              <option value="">-- Pilih Dosen --</option>
-              {dosen.map(d => <option key={d.id} value={d.id}>{d.nama}</option>)}
-            </select>
-            <div className="flex justify-end gap-3 mt-4">
-              <Button variant="secondary" onClick={() => setModal(null)} className="rounded-2xl bg-[hsl(var(--ctp-surface1)/0.35)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-overlay0)/0.35)]">Batal</Button>
-              <Button onClick={handleAssign} className="rounded-2xl bg-[hsl(var(--ctp-blue)/0.20)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-blue)/0.35)]">Tugaskan</Button>
-            </div>
-          </motion.div>
+      <DashboardDialog open={!!modal} onOpenChange={(open) => !open && setModal(null)}>
+        <h3 className="text-lg font-semibold text-[hsl(var(--ctp-text))] mb-3">Pilih Dosen Pembimbing</h3>
+        <Select value={selectedDosen} onValueChange={setSelectedDosen}>
+          <SelectTrigger className="w-full h-10 px-3 rounded-md text-sm bg-[hsl(var(--ctp-mantle)/0.5)] border-[hsl(var(--ctp-overlay0)/0.45)] text-[hsl(var(--ctp-text))]">
+            <SelectValue placeholder="-- Pilih Dosen --" />
+          </SelectTrigger>
+          <SelectContent className="rounded-xl bg-[hsl(var(--ctp-surface0))] border-[hsl(var(--ctp-overlay0)/0.45)]">
+            {dosen.map((d) => (
+              <SelectItem key={d.id} value={String(d.id)} className="text-[hsl(var(--ctp-text))] focus:bg-[hsl(var(--ctp-surface1)/0.6)] focus:text-[hsl(var(--ctp-text))]">
+                {d.nama}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <div className="flex justify-end gap-3 mt-4">
+          <Button variant="secondary" onClick={() => setModal(null)} className="rounded-2xl bg-[hsl(var(--ctp-surface1)/0.35)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-overlay0)/0.35)]">Batal</Button>
+          <Button onClick={handleAssign} className="rounded-2xl bg-[hsl(var(--ctp-blue)/0.20)] text-[hsl(var(--ctp-text))] border border-[hsl(var(--ctp-blue)/0.35)]">Tugaskan</Button>
         </div>
-      )}
+      </DashboardDialog>
     </motion.div>
   );
 }

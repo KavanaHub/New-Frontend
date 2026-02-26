@@ -2,7 +2,10 @@
 // API HELPER - Kavana Bimbingan Online
 // ========================================
 
-const API_BASE_URL = 'https://asia-southeast2-renzip-478811.cloudfunctions.net/kavana';
+const API_BASE_URL = (
+    process.env.NEXT_PUBLIC_API_BASE_URL
+    || 'https://asia-southeast2-renzip-478811.cloudfunctions.net/kavana'
+).replace(/\/$/, '');
 
 // ========================================
 // TOKEN MANAGEMENT
@@ -212,10 +215,13 @@ export const dosenAPI = {
 
     getLaporanList: () => apiRequest('/api/dosen/laporan'),
 
-    approveLaporan: (mahasiswaId, status) =>
-        apiRequest(`/api/dosen/laporan/${mahasiswaId}/status`, {
+    approveLaporan: (laporanId, status, note = '') =>
+        apiRequest(`/api/dosen/laporan/${laporanId}/status`, {
             method: 'PATCH',
-            body: JSON.stringify({ status }),
+            body: JSON.stringify({
+                status,
+                ...(note ? { note } : {}),
+            }),
         }),
 };
 
@@ -336,6 +342,20 @@ export const adminAPI = {
 
     getAllMahasiswa: () => apiRequest('/api/admin/mahasiswa'),
     getSystemReport: () => apiRequest('/api/admin/report'),
+};
+
+// ========================================
+// NOTIFICATION API
+// ========================================
+
+export const notificationAPI = {
+    getStats: async () => {
+        const result = await apiRequest('/api/notifications/stats');
+        if (result.ok) return result;
+
+        // Backward-compat fallback for older backend route style.
+        return apiRequest('/api/notifications');
+    },
 };
 
 // ========================================

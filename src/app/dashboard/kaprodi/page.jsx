@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -16,11 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useAuthStore } from '@/store/auth-store';
 import { kaprodiAPI } from '@/lib/api';
-
-const trendData = [
-  { name: 'Jan', v: 30 }, { name: 'Feb', v: 38 }, { name: 'Mar', v: 42 },
-  { name: 'Apr', v: 50 }, { name: 'Mei', v: 48 }, { name: 'Jun', v: 55 },
-];
 
 function StatCard({ title, value, delta, dir, sub, icon: Icon }) {
   const Arrow = dir === 'up' ? ArrowUpRight : ArrowDownRight;
@@ -49,17 +44,27 @@ export default function KaprodiDashboard() {
   const router = useRouter();
   const { role } = useAuthStore();
   const [stats, setStats] = useState(null);
+  const [totalKoordinator, setTotalKoordinator] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (role && role !== 'kaprodi') { router.replace(`/dashboard/${role}`); return; }
     loadDashboard();
-  }, [role]);
+  }, [role, router]);
 
   const loadDashboard = async () => {
     try {
-      const res = await kaprodiAPI.getStats();
-      if (res.ok) setStats(res.data);
+      const [statsRes, koordinatorRes] = await Promise.all([
+        kaprodiAPI.getStats(),
+        kaprodiAPI.getKoordinatorList(),
+      ]);
+
+      if (statsRes.ok) setStats(statsRes.data);
+      if (koordinatorRes.ok) {
+        const koordinatorList = Array.isArray(koordinatorRes.data) ? koordinatorRes.data : [];
+        const activeKoordinator = koordinatorList.filter((k) => Boolean(k?.is_koordinator)).length;
+        setTotalKoordinator(activeKoordinator);
+      }
     } catch (err) {
       console.error('Error:', err);
     } finally {
@@ -69,8 +74,15 @@ export default function KaprodiDashboard() {
 
   const totalMahasiswa = stats?.total_mahasiswa || 0;
   const totalDosen = stats?.total_dosen || 0;
-  const totalKoordinator = stats?.total_koordinator || 0;
-  const kelulusan = stats?.tingkat_kelulusan || 0;
+  const lulusSemesterIni = stats?.lulus_semester_ini || 0;
+  const kelulusan = totalMahasiswa ? Math.round((lulusSemesterIni / totalMahasiswa) * 100) : 0;
+  const trendData = useMemo(() => {
+    const byAngkatan = stats?.by_angkatan || {};
+    const rows = Object.entries(byAngkatan)
+      .map(([angkatan, count]) => ({ name: String(angkatan), v: Number(count) || 0 }))
+      .sort((a, b) => Number(a.name) - Number(b.name));
+    return rows.length > 0 ? rows : [{ name: '-', v: 0 }];
+  }, [stats]);
 
   if (loading) {
     return (
@@ -94,8 +106,8 @@ export default function KaprodiDashboard() {
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <Card className="xl:col-span-2 bg-[hsl(var(--ctp-surface0)/0.55)] border-[hsl(var(--ctp-overlay0)/0.45)] ctp-ring">
           <CardHeader>
-            <CardTitle className="text-[hsl(var(--ctp-text))]">Tren mahasiswa aktif</CardTitle>
-            <CardDescription className="text-[hsl(var(--ctp-subtext0))]">Jumlah mahasiswa yang aktif bimbingan per bulan.</CardDescription>
+            <CardTitle className="text-[hsl(var(--ctp-text))]">Distribusi angkatan</CardTitle>
+            <CardDescription className="text-[hsl(var(--ctp-subtext0))]">Jumlah mahasiswa per angkatan dari database.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[280px] w-full">

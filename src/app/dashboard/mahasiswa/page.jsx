@@ -31,6 +31,25 @@ import { removeAcademicTitles } from '@/lib/validators';
 // HELPER: Compute "Aktivitas bimbingan (7 hari)" from real bimbingan data
 // ==========================================
 const DAY_NAMES = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+const APPROVED_STATUSES = new Set(['approved', 'disetujui']);
+const WAITING_STATUSES = new Set(['waiting', 'pending', 'menunggu']);
+const REJECTED_STATUSES = new Set(['rejected', 'ditolak']);
+
+function normalizeStatus(value) {
+  return String(value || '').toLowerCase();
+}
+
+function isApprovedStatus(value) {
+  return APPROVED_STATUSES.has(normalizeStatus(value));
+}
+
+function isWaitingStatus(value) {
+  return WAITING_STATUSES.has(normalizeStatus(value));
+}
+
+function isRejectedStatus(value) {
+  return REJECTED_STATUSES.has(normalizeStatus(value));
+}
 
 function computeWeeklyActivity(bimbinganList) {
   const now = new Date();
@@ -64,8 +83,8 @@ function computeStatusDistribution(bimbinganList) {
   let rejected = 0;
 
   bimbinganList.forEach((b) => {
-    if (b.status === 'approved' || b.status === 'disetujui') approved++;
-    else if (b.status === 'rejected' || b.status === 'ditolak') rejected++;
+    if (isApprovedStatus(b.status)) approved++;
+    else if (isRejectedStatus(b.status)) rejected++;
     else pending++;
   });
 
@@ -180,9 +199,12 @@ export default function MahasiswaDashboard() {
   };
 
   const displayName = removeAcademicTitles(user?.nama || profile?.nama || 'Mahasiswa');
-  const approvedCount = bimbinganList.filter((b) => b.status === 'approved' || b.status === 'disetujui').length;
-  const pendingCount = bimbinganList.filter((b) => b.status === 'pending' || b.status === 'menunggu').length;
+  const approvedCount = bimbinganList.filter((b) => isApprovedStatus(b.status)).length;
+  const pendingCount = bimbinganList.filter((b) => isWaitingStatus(b.status)).length;
   const totalBimbingan = bimbinganList.length;
+  const pembimbingName = [profile?.dosen_nama, profile?.dosen_nama_2].filter(Boolean).join(' & ')
+    || profile?.dosen_pembimbing
+    || 'Belum ada pembimbing';
 
   // Computed chart data from real bimbingan
   const chartSubmissionData = useMemo(() => computeWeeklyActivity(bimbinganList), [bimbinganList]);
@@ -195,25 +217,25 @@ export default function MahasiswaDashboard() {
     return bimbinganList.slice(0, 5).map((b, i) => ({
       id: b.id || `B-${i}`,
       actor: displayName,
-      action: b.status === 'approved' ? 'Approved' : b.status === 'pending' ? 'Upload' : 'Revisi',
+      action: isApprovedStatus(b.status) ? 'Disetujui' : isWaitingStatus(b.status) ? 'Menunggu review' : 'Revisi',
       target: b.topik || b.catatan || `Bimbingan ke-${i + 1}`,
       when: b.tanggal ? b.tanggal.slice(0, 10) : '-',
-      risk: b.status === 'rejected' || b.status === 'ditolak' ? 'high' : b.status === 'pending' ? 'medium' : 'low',
+      risk: isRejectedStatus(b.status) ? 'high' : isWaitingStatus(b.status) ? 'medium' : 'low',
     }));
   }, [bimbinganList, displayName]);
 
   const guidanceSummary = useMemo(() => {
-    const progressPct = totalBimbingan > 0 ? Math.round((approvedCount / 8) * 100) : 0;
+    const progressPct = totalBimbingan > 0 ? Math.min(100, Math.round((approvedCount / 8) * 100)) : 0;
     return [
       {
         name: profile?.track || 'Proyek / Internship',
         desc: `${approvedCount} dari 8 sesi bimbingan diselesaikan`,
         progress: progressPct,
-        owner: profile?.dosen_pembimbing || 'Belum ada pembimbing',
+        owner: pembimbingName,
         status: progressPct >= 50 ? 'On track' : 'At risk',
       },
     ];
-  }, [profile, approvedCount, totalBimbingan]);
+  }, [profile, approvedCount, totalBimbingan, pembimbingName]);
 
   if (loading) {
     return (
@@ -232,7 +254,7 @@ export default function MahasiswaDashboard() {
     >
       {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard title="Bimbingan selesai" value={`${approvedCount}/8`} delta={`+${approvedCount}`} dir="up" sub="total approved" />
+        <StatCard title="Bimbingan selesai" value={`${approvedCount}/8`} delta={`+${approvedCount}`} dir="up" sub="total disetujui" />
         <StatCard title="Menunggu review" value={String(pendingCount)} delta={pendingCount > 0 ? `+${pendingCount}` : '0'} dir="up" sub="butuh respon dosen" />
         <StatCard title="Total bimbingan" value={String(totalBimbingan)} delta={`+${totalBimbingan}`} dir="up" sub="sesi tercatat" />
         <StatCard title="Track" value={profile?.track || '-'} delta="" dir="up" sub={profile?.angkatan ? `Angkatan ${profile.angkatan}` : ''} />

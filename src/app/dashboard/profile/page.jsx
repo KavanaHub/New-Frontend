@@ -241,6 +241,11 @@ export default function ProfilePage() {
 
   const p = profile || {};
   const avatarUrl = p.foto_profil || p.avatar || p.profile_image || null;
+  const dosenPembimbingDisplay =
+    p.dosen_pembimbing ||
+    p.pembimbing ||
+    [p.dosen_nama, p.dosen_nama_2].filter(Boolean).join(' / ') ||
+    null;
 
   return (
     <motion.div
@@ -355,7 +360,7 @@ export default function ProfilePage() {
                     {isMahasiswa && <InfoRow icon={Phone} label="WhatsApp" value={p.no_wa || p.whatsapp} />}
                     {isMahasiswa && <InfoRow icon={Calendar} label="Angkatan" value={p.angkatan} />}
                     {isMahasiswa && <InfoRow icon={Briefcase} label="Track" value={p.track} />}
-                    {isMahasiswa && <InfoRow icon={GraduationCap} label="Dosen Pembimbing" value={p.dosen_pembimbing || p.pembimbing} />}
+                    {isMahasiswa && <InfoRow icon={GraduationCap} label="Dosen Pembimbing" value={dosenPembimbingDisplay} />}
                     {!isMahasiswa && <InfoRow icon={Briefcase} label="Jabatan" value={ROLE_LABELS[role]} />}
                   </div>
                 </CardContent>
