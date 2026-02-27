@@ -1,6 +1,7 @@
 import { JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/providers';
+import { FloatingWhatsApp } from '@/components/shared/floating-whatsapp';
 
 const jetBrains = JetBrains_Mono({
   variable: '--font-dashboard',
@@ -50,6 +51,7 @@ export default function RootLayout({ children }) {
         <div className="pointer-events-none fixed inset-0 ctp-grid opacity-20 z-0" />
         <div className="relative z-10">
           <Providers>{children}</Providers>
+          <FloatingWhatsApp />
         </div>
       </body>
     </html>
