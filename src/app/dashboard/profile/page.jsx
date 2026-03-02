@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuthStore } from '@/store/auth-store';
+import Image from 'next/image';
 import { authAPI, mahasiswaAPI, dosenAPI, koordinatorAPI, kaprodiAPI, uploadAPI } from '@/lib/api';
 
 // ==============================
@@ -263,7 +264,7 @@ export default function ProfilePage() {
             <div className="relative group">
               <div className="w-20 h-20 rounded-2xl border-4 border-[hsl(var(--ctp-surface0))] bg-[hsl(var(--ctp-surface1))] flex items-center justify-center overflow-hidden shadow-lg">
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  <Image src={avatarUrl} alt="Avatar" className="object-cover" fill sizes="80px" />
                 ) : (
                   <span className="text-xl font-bold text-[hsl(var(--ctp-lavender))]">
                     {getInitials(p.nama)}
@@ -481,3 +482,4 @@ function InfoRow({ icon: Icon, label, value }) {
     </div>
   );
 }
+
