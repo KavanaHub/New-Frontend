@@ -32,7 +32,11 @@ export default function KelolaUsersPage() {
   const loadData = async () => {
     try {
       const res = await adminAPI.getAllUsers();
-      if (res.ok) setUsers(Array.isArray(res.data) ? res.data : []);
+      if (res.ok) {
+        const d = res.data;
+        if (Array.isArray(d)) setUsers(d);
+        else setUsers([...(d.mahasiswa || []), ...(d.dosen || [])]);
+      }
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   };
