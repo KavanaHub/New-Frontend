@@ -32,13 +32,23 @@ export function isLoggedIn() {
 // BASE API REQUEST
 // ========================================
 
+/**
+ * Generate a simple traceparent header for OpenTelemetry propagation.
+ */
+function generateTraceparent() {
+    const hex = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => b.toString(16).padStart(2, '0')).join('');
+    return `00-${hex(16)}-${hex(8)}-01`;
+}
+
 export async function apiRequest(endpoint, options = {}) {
     const token = getToken();
 
     const config = {
+        credentials: 'include', // Send session cookies for Better Auth
         headers: {
             'Content-Type': 'application/json',
             ...(token && { Authorization: `Bearer ${token}` }),
+            ...(typeof crypto !== 'undefined' && crypto.getRandomValues && { traceparent: generateTraceparent() }),
             ...options.headers,
         },
         ...options,
@@ -55,7 +65,10 @@ export async function apiRequest(endpoint, options = {}) {
 
         if (!response.ok) {
             console.error(`API Error (${endpoint}):`, data);
-            return { ok: false, error: data.message || 'Request failed', status: response.status };
+            // Handle new standardized error format: { error: { code, message, request_id } }
+            const errorMsg = data?.error?.message || data?.message || 'Request failed';
+            const errorCode = data?.error?.code || null;
+            return { ok: false, error: errorMsg, code: errorCode, status: response.status };
         }
 
         return { ok: true, data };
@@ -106,10 +119,18 @@ export const authAPI = {
             body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
         }),
 
-    logout: () => {
+    logout: async () => {
+        try {
+            await apiRequest('/api/auth/logout', { method: 'POST' });
+        } catch (_) { /* ignore - clear local state regardless */ }
         clearToken();
         sessionStorage.clear();
     },
+
+    // Session-based endpoints (Better Auth)
+    getSession: () => apiRequest('/api/auth/session'),
+    getMe: () => apiRequest('/api/auth/me'),
+    refreshSession: () => apiRequest('/api/auth/refresh', { method: 'POST' }),
 
     requestOTP: (email, type = 'reset_password') =>
         apiRequest('/api/auth/request-otp', {
@@ -370,6 +391,7 @@ export const uploadAPI = {
         const token = getToken();
         const response = await fetch(`${API_BASE_URL}/api/profile/upload`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 Authorization: `Bearer ${token}`,
             },

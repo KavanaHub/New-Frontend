@@ -186,8 +186,8 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
     [notificationItems]
   );
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     window.location.href = '/login';
   };
 

@@ -55,8 +55,8 @@ export default function LoginPage() {
       const result = await authAPI.login(formData.identifier.trim(), formData.password);
 
       if (result.ok) {
-        storeLogin(result.data.token, result.data.role, result.data.user_id);
-        setUser({ nama: result.data.nama, email: result.data.email });
+        storeLogin(result.data.token, result.data.role, result.data.user_id, result.data.roles || []);
+        setUser({ nama: result.data.nama, email: result.data.email, roles: result.data.roles });
 
         toast.success('Login berhasil! Mengalihkan...');
 

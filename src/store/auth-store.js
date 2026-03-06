@@ -1,9 +1,10 @@
 import { create } from 'zustand';
-import { getToken, setToken, clearToken } from '@/lib/api';
+import { getToken, setToken, clearToken, authAPI } from '@/lib/api';
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set, get) => ({
     token: null,
     role: null,
+    roles: [],       // All roles from backend (for kaprodi+koordinator combo etc.)
     userId: null,
     user: null,
 
@@ -15,11 +16,14 @@ export const useAuthStore = create((set) => ({
         const userId = sessionStorage.getItem('userId');
         const userName = sessionStorage.getItem('userName');
         const userEmail = sessionStorage.getItem('userEmail');
+        const rolesRaw = sessionStorage.getItem('userRoles');
+        const roles = rolesRaw ? JSON.parse(rolesRaw) : (role ? [role] : []);
 
         if (token && role) {
             set({
                 token,
                 role,
+                roles,
                 userId,
                 user: userName ? { nama: userName, email: userEmail } : null,
             });
@@ -27,25 +31,37 @@ export const useAuthStore = create((set) => ({
     },
 
     // Set user after login
-    login: (token, role, userId) => {
+    login: (token, role, userId, roles = []) => {
         setToken(token);
         sessionStorage.setItem('userRole', role);
         sessionStorage.setItem('userId', userId);
-        set({ token, role, userId });
+        const allRoles = roles.length > 0 ? roles : [role];
+        sessionStorage.setItem('userRoles', JSON.stringify(allRoles));
+        set({ token, role, roles: allRoles, userId });
     },
 
     // Set user profile data
     setUser: (user) => {
         if (user?.nama) sessionStorage.setItem('userName', user.nama);
         if (user?.email) sessionStorage.setItem('userEmail', user.email);
-        set({ user });
+        // Sync roles from profile if available
+        if (user?.roles?.length) {
+            sessionStorage.setItem('userRoles', JSON.stringify(user.roles));
+            set({ user, roles: user.roles });
+        } else {
+            set({ user });
+        }
     },
 
-    // Logout
-    logout: () => {
-        clearToken();
-        sessionStorage.clear();
-        set({ token: null, role: null, userId: null, user: null });
+    // Logout (server-side invalidation + local cleanup)
+    logout: async () => {
+        await authAPI.logout();
+        set({ token: null, role: null, roles: [], userId: null, user: null });
+    },
+
+    // Check if user has a specific role
+    hasRole: (targetRole) => {
+        return get().roles.includes(targetRole);
     },
 
     // Check if authenticated
