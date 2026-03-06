@@ -21,17 +21,18 @@ export function AuthGuard({ children, allowedRoles = [] }) {
       }
     }
 
-    // Validate session with backend once per mount
+    // Validate session with backend once per mount (non-blocking, graceful)
     if (token && !sessionChecked.current) {
       sessionChecked.current = true;
       authAPI.getMe().then((result) => {
         if (result.ok && result.data) {
           setUser(result.data);
-        } else if (result.code === 'UNAUTHORIZED' || result.code === 'SESSION_EXPIRED' || result.code === 'INVALID_TOKEN') {
-          // Session/token invalid — force re-login
+        } else if (result.status === 401 && (result.code === 'UNAUTHORIZED' || result.code === 'SESSION_EXPIRED' || result.code === 'INVALID_TOKEN')) {
+          // Session/token definitely invalid — force re-login
           useAuthStore.getState().logout();
           router.replace('/login');
         }
+        // For 404 or other errors (e.g. endpoint doesn't exist yet), silently ignore
       });
     }
 

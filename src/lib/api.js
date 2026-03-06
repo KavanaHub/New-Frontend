@@ -43,8 +43,12 @@ function generateTraceparent() {
 export async function apiRequest(endpoint, options = {}) {
     const token = getToken();
 
+    // Only send credentials (cookies) when explicitly needed, to avoid
+    // CORS issues with backends that use wildcard Access-Control-Allow-Origin
+    const needsCredentials = options.credentials === 'include';
+
     const config = {
-        credentials: 'include', // Send session cookies for Better Auth
+        ...(needsCredentials && { credentials: 'include' }),
         headers: {
             'Content-Type': 'application/json',
             ...(token && { Authorization: `Bearer ${token}` }),
@@ -127,10 +131,10 @@ export const authAPI = {
         sessionStorage.clear();
     },
 
-    // Session-based endpoints (Better Auth)
-    getSession: () => apiRequest('/api/auth/session'),
+    // Session-based endpoints (Better Auth) — need credentials for cookies
+    getSession: () => apiRequest('/api/auth/session', { credentials: 'include' }),
     getMe: () => apiRequest('/api/auth/me'),
-    refreshSession: () => apiRequest('/api/auth/refresh', { method: 'POST' }),
+    refreshSession: () => apiRequest('/api/auth/refresh', { method: 'POST', credentials: 'include' }),
 
     requestOTP: (email, type = 'reset_password') =>
         apiRequest('/api/auth/request-otp', {
@@ -391,7 +395,6 @@ export const uploadAPI = {
         const token = getToken();
         const response = await fetch(`${API_BASE_URL}/api/profile/upload`, {
             method: 'POST',
-            credentials: 'include',
             headers: {
                 Authorization: `Bearer ${token}`,
             },
