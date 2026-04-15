@@ -204,7 +204,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
           <DesktopSidebar role={currentRole} />
 
           {/* Main Content */}
-          <main className="flex-1 pb-10">
+          <main className="min-w-0 flex-1 pb-10">
             {/* Top Navbar */}
             <header className="sticky top-0 z-20 px-4 pt-4 lg:px-6 lg:pt-5">
               <div className="soft-panel rounded-[30px] px-4 py-3 sm:px-5">
