@@ -18,11 +18,12 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { CAMPUS_CONTACT, LANDING_CONTENT, SOCIAL_PROOF_CONFIG } from '@/lib/constants';
+import { CAMPUS_CONTACT, LANDING_CONTENT, PROJECT_OUTPUTS, SOCIAL_PROOF_CONFIG } from '@/lib/constants';
 
 const ROLE_ICONS = [GraduationCap, Users, ShieldCheck, ClipboardList];
 const FEATURE_ICONS = [BookOpenText, MessageSquareText, ShieldCheck, CalendarClock];
 const STEP_ICONS = [Sparkles, BookOpenText, ClipboardList, MessageSquareText, CheckCircle2];
+const projectOne = PROJECT_OUTPUTS.project1;
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -259,6 +260,48 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+          <div className="grid gap-6 lg:grid-cols-[1fr_0.95fr]">
+            <div className="soft-panel rounded-[34px] px-6 py-7 sm:px-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[hsl(var(--ctp-blue))]">
+                {projectOne.label}
+              </p>
+              <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+                Luaran tahap pertama sudah bisa ditampilkan sebagai demo aplikasi yang utuh.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-[hsl(var(--ctp-subtext1))]">
+                Fokus awal proyek adalah memperlihatkan bentuk aplikasi implementor secara jelas:
+                halaman publik, autentikasi, dashboard, dan alur inti yang cukup untuk presentasi proyek 1.
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <Link href="/luaran-proyek-1">
+                  <Button size="lg" className="w-full px-7 sm:w-auto">
+                    Lihat Luaran Proyek 1
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/panduan-pengguna">
+                  <Button variant="outline" size="lg" className="w-full px-7 sm:w-auto">
+                    Buka Panduan
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {projectOne.deliverables.map((item) => (
+                <article key={item.title} className="soft-card rounded-[28px] p-5">
+                  <span className="inline-flex rounded-full border border-[hsl(var(--ctp-green)/0.22)] bg-[hsl(var(--ctp-green)/0.12)] px-3 py-1 text-xs font-semibold text-[hsl(var(--ctp-green))]">
+                    {item.status}
+                  </span>
+                  <h3 className="mt-4 text-lg font-bold">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-[hsl(var(--ctp-subtext0))]">{item.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-20">
           <div className="soft-panel rounded-[34px] px-6 py-8 sm:px-8 lg:px-10 lg:py-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center">
@@ -296,6 +339,54 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        <footer className="border-t border-[hsl(var(--ctp-surface1)/0.85)] bg-[hsl(var(--ctp-mantle)/0.42)]">
+          <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_0.9fr_0.9fr] lg:px-8">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[hsl(var(--ctp-blue))]">
+                Kavana
+              </p>
+              <p className="mt-4 max-w-md text-sm leading-7 text-[hsl(var(--ctp-subtext1))]">
+                Platform bimbingan online untuk membantu mahasiswa, dosen, dan pengelola prodi
+                bekerja dalam alur akademik yang lebih rapi dan terdokumentasi.
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm font-bold text-[hsl(var(--ctp-text))]">Akses Platform</p>
+              <div className="mt-4 flex flex-col gap-3">
+                {LANDING_CONTENT.footer.platformLinks.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="text-sm text-[hsl(var(--ctp-subtext1))] transition-colors hover:text-[hsl(var(--ctp-blue))]"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-sm font-bold text-[hsl(var(--ctp-text))]">Sumber Daya</p>
+              <div className="mt-4 flex flex-col gap-3">
+                {LANDING_CONTENT.footer.resourceLinks.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="text-sm text-[hsl(var(--ctp-subtext1))] transition-colors hover:text-[hsl(var(--ctp-blue))]"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-[hsl(var(--ctp-surface1)/0.85)] px-4 py-5 text-center text-sm text-[hsl(var(--ctp-subtext0))] sm:px-6 lg:px-8">
+            {LANDING_CONTENT.footer.copyright}
+          </div>
+        </footer>
       </main>
     </div>
   );

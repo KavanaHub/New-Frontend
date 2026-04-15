@@ -243,12 +243,59 @@ export const LANDING_CONTENT = {
             { label: 'Panel Kaprodi', href: '/login' },
         ],
         resourceLinks: [
+            { label: 'Luaran Proyek 1', href: '/luaran-proyek-1' },
             { label: 'Panduan Pengguna', href: '/panduan-pengguna' },
             { label: 'FAQ Sistem', href: '/faq-sistem' },
             { label: 'Kebijakan Privasi', href: '/kebijakan-privasi' },
             { label: 'Syarat Layanan', href: '/syarat-layanan' },
         ],
         copyright: 'Copyright 2026 Kavana Bimbingan Online.',
+    },
+};
+
+export const PROJECT_OUTPUTS = {
+    project1: {
+        label: 'Proyek 1',
+        title: 'Luaran Proyek 1',
+        summary:
+            'Tahap awal difokuskan pada aplikasi implementor yang sudah bisa dipresentasikan ke publik, dengan landing page yang jelas dan alur aplikasi inti yang cukup untuk menunjukkan nilai produk.',
+        deliverables: [
+            {
+                title: 'Aplikasi Implementor',
+                status: 'Siap Demo',
+                description:
+                    'Landing page publik, autentikasi, dan dashboard berbasis peran sudah tersedia untuk memperlihatkan bentuk aplikasi secara utuh.',
+            },
+            {
+                title: 'CRUD sebagai Nilai Tambah',
+                status: 'Dapat Ditinjau',
+                description:
+                    'Beberapa alur data seperti profil, track, proposal, bimbingan, dan kelompok dapat diperiksa langsung oleh dosen sebagai nilai tambah, tanpa dijadikan fokus klaim utama proyek 1.',
+            },
+            {
+                title: 'Draft Buku',
+                status: 'Siap Disusun',
+                description:
+                    'Narasi produk, alur pengguna, dan struktur fitur pada aplikasi sudah cukup matang untuk diturunkan menjadi draft buku proyek.',
+            },
+            {
+                title: 'Poster',
+                status: 'Siap Turunkan',
+                description:
+                    'Pesan utama produk, manfaat, dan diferensiasi aplikasi sudah bisa diringkas menjadi materi poster presentasi proyek 1.',
+            },
+        ],
+        implementedScope: [
+            'Landing page publik untuk memperkenalkan Kavana.',
+            'Login, register, OTP email, dan reset password.',
+            'Dashboard berbeda untuk mahasiswa, dosen, koordinator, kaprodi, dan admin.',
+            'Alur akademik inti seperti track, proposal, bimbingan, laporan, dan monitoring.',
+        ],
+        academicNotes: [
+            'Komponen CRUD diposisikan sebagai nilai tambah yang dapat diperiksa langsung oleh dosen saat presentasi atau review.',
+            'Draft buku dan poster tetap perlu finalisasi isi akademik di luar codebase.',
+            'Halaman ini berfungsi sebagai representasi resmi luaran Proyek 1 di aplikasi.',
+        ],
     },
 };
 
