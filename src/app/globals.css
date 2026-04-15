@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-dashboard);
-  --font-serif: var(--font-dashboard);
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: var(--font-ui);
+  --font-serif: var(--font-ui);
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,442 +39,307 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-2xl: calc(var(--radius) + 10px);
+  --radius-3xl: calc(var(--radius) + 16px);
 }
 
-/* ===================================
-   CATPPUCCIN LATTE — LIGHT THEME
-   =================================== */
 :root {
-  --ctp-rosewater: 12 68% 62%;
-  --ctp-flamingo: 3 62% 60%;
-  --ctp-pink: 332 62% 60%;
-  --ctp-mauve: 258 58% 56%;
-  --ctp-red: 2 72% 43%;
-  --ctp-maroon: 351 61% 52%;
-  --ctp-peach: 29 86% 48%;
-  --ctp-yellow: 40 82% 42%;
-  --ctp-green: 153 56% 31%;
-  --ctp-teal: 184 67% 31%;
-  --ctp-sky: 199 86% 40%;
-  --ctp-sapphire: 205 81% 34%;
-  --ctp-blue: 213 88% 33%;
-  --ctp-lavender: 227 62% 47%;
+  --font-ui: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --ctp-rosewater: 18 58% 76%;
+  --ctp-flamingo: 9 52% 72%;
+  --ctp-pink: 338 41% 74%;
+  --ctp-mauve: 260 34% 70%;
+  --ctp-red: 6 67% 58%;
+  --ctp-maroon: 354 46% 64%;
+  --ctp-peach: 28 80% 70%;
+  --ctp-yellow: 44 78% 74%;
+  --ctp-green: 149 34% 47%;
+  --ctp-teal: 176 34% 48%;
+  --ctp-sky: 197 60% 67%;
+  --ctp-sapphire: 203 43% 59%;
+  --ctp-blue: 214 53% 58%;
+  --ctp-lavender: 232 52% 74%;
 
-  --ctp-text: 215 39% 17%;
-  --ctp-subtext1: 215 25% 30%;
-  --ctp-subtext0: 215 18% 40%;
-  --ctp-overlay2: 214 14% 50%;
-  --ctp-overlay1: 214 12% 58%;
-  --ctp-overlay0: 214 10% 65%;
-  --ctp-surface2: 212 17% 74%;
-  --ctp-surface1: 211 20% 82%;
-  --ctp-surface0: 210 24% 89%;
-  --ctp-base: 210 37% 97%;
-  --ctp-mantle: 210 32% 94%;
-  --ctp-crust: 210 27% 91%;
+  --ctp-text: 223 26% 23%;
+  --ctp-subtext1: 222 18% 37%;
+  --ctp-subtext0: 221 14% 47%;
+  --ctp-overlay2: 221 12% 57%;
+  --ctp-overlay1: 220 11% 65%;
+  --ctp-overlay0: 219 14% 74%;
+  --ctp-surface2: 216 24% 82%;
+  --ctp-surface1: 214 28% 88%;
+  --ctp-surface0: 211 34% 93%;
+  --ctp-base: 34 33% 98%;
+  --ctp-mantle: 210 38% 96%;
+  --ctp-crust: 210 46% 94%;
 
-  --radius: 0.75rem;
+  --radius: 1.2rem;
   --background: hsl(var(--ctp-base));
   --foreground: hsl(var(--ctp-text));
-  --card: hsl(var(--ctp-mantle));
+  --card: hsl(var(--ctp-base) / 0.88);
   --card-foreground: hsl(var(--ctp-text));
-  --popover: hsl(var(--ctp-crust));
+  --popover: hsl(var(--ctp-base) / 0.96);
   --popover-foreground: hsl(var(--ctp-text));
   --primary: hsl(var(--ctp-blue));
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(var(--ctp-surface0));
+  --secondary: hsl(var(--ctp-crust) / 0.9);
   --secondary-foreground: hsl(var(--ctp-text));
-  --muted: hsl(var(--ctp-surface0));
+  --muted: hsl(var(--ctp-surface0) / 0.9);
   --muted-foreground: hsl(var(--ctp-subtext0));
-  --accent: hsl(var(--ctp-surface0));
+  --accent: hsl(var(--ctp-crust) / 0.92);
   --accent-foreground: hsl(var(--ctp-text));
   --destructive: hsl(var(--ctp-red));
-  --border: hsl(var(--ctp-surface1));
-  --input: hsl(var(--ctp-surface1));
-  --ring: hsl(var(--ctp-blue) / 0.6);
+  --border: hsl(var(--ctp-surface1) / 0.9);
+  --input: hsl(var(--ctp-surface1) / 0.95);
+  --ring: hsl(var(--ctp-blue) / 0.35);
   --chart-1: hsl(var(--ctp-blue));
   --chart-2: hsl(var(--ctp-teal));
-  --chart-3: hsl(var(--ctp-mauve));
+  --chart-3: hsl(var(--ctp-lavender));
   --chart-4: hsl(var(--ctp-peach));
   --chart-5: hsl(var(--ctp-green));
-  --sidebar: hsl(var(--ctp-crust));
+  --sidebar: hsl(var(--ctp-base) / 0.78);
   --sidebar-foreground: hsl(var(--ctp-text));
   --sidebar-primary: hsl(var(--ctp-blue));
-  --sidebar-primary-foreground: hsl(220 23% 98%);
-  --sidebar-accent: hsl(var(--ctp-surface0));
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(var(--ctp-crust) / 0.92);
   --sidebar-accent-foreground: hsl(var(--ctp-text));
-  --sidebar-border: hsl(var(--ctp-surface1));
-  --sidebar-ring: hsl(var(--ctp-blue) / 0.6);
+  --sidebar-border: hsl(var(--ctp-surface1) / 0.82);
+  --sidebar-ring: hsl(var(--ctp-blue) / 0.3);
 }
 
-/* ===================================
-   CATPPUCCIN MOCHA — DARK THEME
-   =================================== */
 .dark {
-  --ctp-rosewater: 11 58% 84%;
-  --ctp-flamingo: 5 56% 81%;
-  --ctp-pink: 330 57% 81%;
-  --ctp-mauve: 260 58% 78%;
-  --ctp-red: 3 74% 72%;
-  --ctp-maroon: 355 61% 74%;
-  --ctp-peach: 29 80% 72%;
-  --ctp-yellow: 44 76% 72%;
-  --ctp-green: 153 46% 67%;
-  --ctp-teal: 184 52% 64%;
-  --ctp-sky: 199 72% 67%;
-  --ctp-sapphire: 205 69% 64%;
-  --ctp-blue: 214 76% 67%;
-  --ctp-lavender: 228 62% 74%;
+  --ctp-rosewater: 17 42% 77%;
+  --ctp-flamingo: 10 36% 72%;
+  --ctp-pink: 336 28% 74%;
+  --ctp-mauve: 257 26% 73%;
+  --ctp-red: 6 72% 70%;
+  --ctp-maroon: 352 34% 70%;
+  --ctp-peach: 29 75% 71%;
+  --ctp-yellow: 43 72% 74%;
+  --ctp-green: 147 28% 64%;
+  --ctp-teal: 178 27% 61%;
+  --ctp-sky: 197 48% 67%;
+  --ctp-sapphire: 205 35% 64%;
+  --ctp-blue: 214 52% 72%;
+  --ctp-lavender: 232 46% 80%;
 
-  --ctp-text: 210 32% 91%;
-  --ctp-subtext1: 210 19% 78%;
-  --ctp-subtext0: 210 14% 66%;
-  --ctp-overlay2: 214 14% 58%;
-  --ctp-overlay1: 215 13% 49%;
-  --ctp-overlay0: 216 12% 41%;
-  --ctp-surface2: 217 18% 35%;
-  --ctp-surface1: 219 20% 27%;
-  --ctp-surface0: 220 24% 20%;
-  --ctp-base: 220 32% 11%;
-  --ctp-mantle: 220 32% 9%;
-  --ctp-crust: 220 34% 7%;
+  --ctp-text: 210 33% 92%;
+  --ctp-subtext1: 214 18% 79%;
+  --ctp-subtext0: 215 14% 68%;
+  --ctp-overlay2: 216 12% 56%;
+  --ctp-overlay1: 217 11% 47%;
+  --ctp-overlay0: 219 13% 37%;
+  --ctp-surface2: 221 17% 30%;
+  --ctp-surface1: 222 20% 24%;
+  --ctp-surface0: 223 24% 18%;
+  --ctp-base: 224 30% 12%;
+  --ctp-mantle: 225 28% 10%;
+  --ctp-crust: 225 24% 8%;
 
   --background: hsl(var(--ctp-base));
   --foreground: hsl(var(--ctp-text));
-  --card: hsl(var(--ctp-surface0) / 0.55);
+  --card: hsl(var(--ctp-surface0) / 0.84);
   --card-foreground: hsl(var(--ctp-text));
-  --popover: hsl(var(--ctp-mantle) / 0.95);
+  --popover: hsl(var(--ctp-mantle) / 0.96);
   --popover-foreground: hsl(var(--ctp-text));
   --primary: hsl(var(--ctp-sky));
   --primary-foreground: hsl(var(--ctp-crust));
-  --secondary: hsl(var(--ctp-surface0) / 0.55);
+  --secondary: hsl(var(--ctp-surface0) / 0.84);
   --secondary-foreground: hsl(var(--ctp-text));
-  --muted: hsl(var(--ctp-surface0) / 0.40);
+  --muted: hsl(var(--ctp-surface0) / 0.72);
   --muted-foreground: hsl(var(--ctp-subtext0));
-  --accent: hsl(var(--ctp-surface0) / 0.55);
+  --accent: hsl(var(--ctp-surface1) / 0.9);
   --accent-foreground: hsl(var(--ctp-text));
   --destructive: hsl(var(--ctp-red));
-  --border: hsl(var(--ctp-overlay0) / 0.35);
-  --input: hsl(var(--ctp-overlay0) / 0.35);
-  --ring: hsl(var(--ctp-sky) / 0.8);
+  --border: hsl(var(--ctp-overlay0) / 0.7);
+  --input: hsl(var(--ctp-overlay0) / 0.74);
+  --ring: hsl(var(--ctp-sky) / 0.36);
   --chart-1: hsl(var(--ctp-sky));
   --chart-2: hsl(var(--ctp-teal));
-  --chart-3: hsl(var(--ctp-mauve));
+  --chart-3: hsl(var(--ctp-lavender));
   --chart-4: hsl(var(--ctp-peach));
   --chart-5: hsl(var(--ctp-green));
-  --sidebar: hsl(var(--ctp-mantle) / 0.6);
+  --sidebar: hsl(var(--ctp-mantle) / 0.82);
   --sidebar-foreground: hsl(var(--ctp-text));
   --sidebar-primary: hsl(var(--ctp-sky));
   --sidebar-primary-foreground: hsl(var(--ctp-crust));
-  --sidebar-accent: hsl(var(--ctp-surface0) / 0.55);
+  --sidebar-accent: hsl(var(--ctp-surface0) / 0.88);
   --sidebar-accent-foreground: hsl(var(--ctp-text));
-  --sidebar-border: hsl(var(--ctp-overlay0) / 0.35);
-  --sidebar-ring: hsl(var(--ctp-sky) / 0.8);
+  --sidebar-border: hsl(var(--ctp-overlay0) / 0.7);
+  --sidebar-ring: hsl(var(--ctp-sky) / 0.35);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "cv11", "ss01";
+    min-height: 100vh;
+    font-feature-settings: "ss01", "cv02", "cv03";
     text-rendering: optimizeLegibility;
+    background-image:
+      radial-gradient(circle at top left, hsl(var(--ctp-sky) / 0.18), transparent 28%),
+      radial-gradient(circle at top right, hsl(var(--ctp-lavender) / 0.14), transparent 24%),
+      linear-gradient(180deg, hsl(var(--ctp-base)), hsl(var(--ctp-mantle)));
   }
+
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    font-family: var(--font-dashboard), "Segoe UI", sans-serif;
-    letter-spacing: -0.012em;
+    font-family: var(--font-ui), "Segoe UI", sans-serif;
+    letter-spacing: -0.03em;
+  }
+
+  ::selection {
+    background: hsl(var(--ctp-blue) / 0.2);
+    color: hsl(var(--ctp-text));
   }
 }
 
-/* ===== GLASSMORPHISM UTILITIES — LIGHT ===== */
 .ctp-noise {
   background-image:
-    radial-gradient(1200px 600px at 12% 8%, hsl(var(--ctp-sky) / 0.10), transparent 56%),
-    radial-gradient(900px 520px at 88% 12%, hsl(var(--ctp-lavender) / 0.08), transparent 54%),
-    radial-gradient(1100px 650px at 55% 92%, hsl(var(--ctp-teal) / 0.06), transparent 58%),
-    linear-gradient(to bottom, hsl(var(--ctp-crust)), hsl(var(--ctp-base)));
+    radial-gradient(1100px 580px at 10% 6%, hsl(var(--ctp-sky) / 0.16), transparent 56%),
+    radial-gradient(900px 500px at 88% 8%, hsl(var(--ctp-lavender) / 0.15), transparent 54%),
+    radial-gradient(1200px 680px at 52% 100%, hsl(var(--ctp-teal) / 0.12), transparent 58%);
 }
 
 .ctp-grid {
   background-image:
-    linear-gradient(hsl(var(--ctp-surface1) / 0.28) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--ctp-surface1) / 0.28) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse 76% 60% at 50% 24%, black 58%, transparent 87%);
+    linear-gradient(hsl(var(--ctp-surface1) / 0.42) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--ctp-surface1) / 0.42) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse 78% 64% at 50% 24%, black 54%, transparent 88%);
 }
 
 .ctp-ring {
-  box-shadow: 0 1px 3px hsl(var(--ctp-surface2) / 0.30), 0 4px 16px hsl(var(--ctp-surface2) / 0.15);
+  box-shadow:
+    0 1px 0 hsl(0 0% 100% / 0.45) inset,
+    0 18px 48px -34px hsl(var(--ctp-sapphire) / 0.42);
 }
 
 .ctp-focus:focus-visible {
-  outline: 2px solid hsl(var(--ctp-blue) / 0.72);
-  outline-offset: 2px;
+  outline: 2px solid hsl(var(--ctp-blue) / 0.45);
+  outline-offset: 3px;
 }
 
-/* ===== GLASSMORPHISM UTILITIES — DARK ===== */
+.soft-card {
+  background: hsl(var(--ctp-base) / 0.82);
+  border: 1px solid hsl(var(--ctp-surface1) / 0.85);
+  box-shadow:
+    0 1px 0 hsl(0 0% 100% / 0.52) inset,
+    0 24px 60px -40px hsl(var(--ctp-sapphire) / 0.42);
+  backdrop-filter: blur(18px);
+}
+
+.soft-panel {
+  background: linear-gradient(180deg, hsl(var(--ctp-base) / 0.9), hsl(var(--ctp-crust) / 0.85));
+  border: 1px solid hsl(var(--ctp-surface1) / 0.85);
+  box-shadow:
+    0 1px 0 hsl(0 0% 100% / 0.45) inset,
+    0 32px 70px -48px hsl(var(--ctp-sapphire) / 0.34);
+  backdrop-filter: blur(22px);
+}
+
+.soft-section-title {
+  color: hsl(var(--ctp-text));
+  letter-spacing: -0.03em;
+}
+
 .dark .ctp-noise {
   background-image:
-    radial-gradient(1200px 600px at 12% 8%, hsl(var(--ctp-sky) / 0.20), transparent 56%),
-    radial-gradient(900px 520px at 88% 12%, hsl(var(--ctp-lavender) / 0.14), transparent 55%),
-    radial-gradient(1100px 650px at 55% 92%, hsl(var(--ctp-teal) / 0.12), transparent 57%),
-    linear-gradient(to bottom, hsl(var(--ctp-mantle)), hsl(var(--ctp-base)));
+    radial-gradient(1100px 580px at 10% 6%, hsl(var(--ctp-sky) / 0.18), transparent 56%),
+    radial-gradient(900px 500px at 88% 8%, hsl(var(--ctp-lavender) / 0.16), transparent 54%),
+    radial-gradient(1200px 680px at 52% 100%, hsl(var(--ctp-teal) / 0.14), transparent 58%);
 }
 
 .dark .ctp-grid {
   background-image:
-    linear-gradient(hsl(var(--ctp-overlay0) / 0.11) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--ctp-overlay0) / 0.11) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse 76% 60% at 50% 24%, black 58%, transparent 87%);
+    linear-gradient(hsl(var(--ctp-overlay0) / 0.26) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--ctp-overlay0) / 0.26) 1px, transparent 1px);
 }
 
 .dark .ctp-ring {
-  box-shadow: 0 0 0 1px hsl(var(--ctp-overlay0) / 0.22), 0 16px 50px -30px hsl(var(--ctp-crust) / 0.95);
+  box-shadow:
+    0 1px 0 hsl(0 0% 100% / 0.04) inset,
+    0 22px 60px -38px hsl(var(--ctp-crust) / 0.88);
 }
 
-/* ===== RECHARTS OVERRIDES ===== */
+.dark .soft-card,
+.dark .soft-panel {
+  box-shadow:
+    0 1px 0 hsl(0 0% 100% / 0.03) inset,
+    0 28px 68px -42px hsl(var(--ctp-crust) / 0.9);
+}
+
 .recharts-cartesian-grid line {
   stroke: hsl(var(--ctp-surface1));
 }
 
 .dark .recharts-cartesian-grid line {
-  stroke: hsl(var(--ctp-overlay0) / 0.22);
+  stroke: hsl(var(--ctp-overlay0) / 0.4);
 }
 
 .recharts-tooltip-wrapper .recharts-default-tooltip {
-  background: hsl(var(--ctp-crust)) !important;
+  background: hsl(var(--ctp-base) / 0.96) !important;
   border: 1px solid hsl(var(--ctp-surface1)) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 8px 32px hsl(var(--ctp-surface2) / 0.25) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 18px 40px -32px hsl(var(--ctp-sapphire) / 0.42) !important;
 }
 
 .dark .recharts-tooltip-wrapper .recharts-default-tooltip {
-  background: hsl(var(--ctp-mantle) / 0.95) !important;
-  border: 1px solid hsl(var(--ctp-overlay0) / 0.35) !important;
-  box-shadow: 0 18px 50px -32px hsl(var(--ctp-crust) / 0.95) !important;
+  background: hsl(var(--ctp-mantle) / 0.94) !important;
+  border: 1px solid hsl(var(--ctp-overlay0) / 0.45) !important;
+  box-shadow: 0 18px 44px -28px hsl(var(--ctp-crust) / 0.92) !important;
 }
 
 .recharts-tooltip-wrapper .recharts-default-tooltip * {
   color: hsl(var(--ctp-text)) !important;
 }
 
-/* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--ctp-surface2));
+  background: hsl(var(--ctp-overlay0) / 0.58);
   border-radius: 999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--ctp-overlay0));
+  background: hsl(var(--ctp-overlay2) / 0.75);
 }
 
-.dark::-webkit-scrollbar-thumb {
-  background: hsl(var(--ctp-overlay0) / 0.35);
-}
-.dark::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--ctp-overlay0) / 0.55);
-}
-
-/* ===== DASHBOARD MONOCHROME OVERRIDES ===== */
-html.dashboard-mono {
-  --font-sans: var(--font-dashboard);
-  --ctp-rosewater: 0 0% 66%;
-  --ctp-flamingo: 0 0% 63%;
-  --ctp-pink: 0 0% 61%;
-  --ctp-mauve: 0 0% 58%;
-  --ctp-red: 0 70% 42%;
-  --ctp-maroon: 0 50% 40%;
-  --ctp-peach: 0 0% 48%;
-  --ctp-yellow: 0 0% 42%;
-  --ctp-green: 0 0% 34%;
-  --ctp-teal: 0 0% 58%;
-  --ctp-sky: 0 0% 70%;
-  --ctp-sapphire: 0 0% 46%;
-  --ctp-blue: 0 0% 14%;
-  --ctp-lavender: 0 0% 66%;
-
-  --ctp-text: 0 0% 10%;
-  --ctp-subtext1: 0 0% 24%;
-  --ctp-subtext0: 0 0% 38%;
-  --ctp-overlay2: 0 0% 52%;
-  --ctp-overlay1: 0 0% 60%;
-  --ctp-overlay0: 0 0% 68%;
-  --ctp-surface2: 0 0% 76%;
-  --ctp-surface1: 0 0% 84%;
-  --ctp-surface0: 0 0% 90%;
-  --ctp-base: 0 0% 95%;
-  --ctp-mantle: 0 0% 93%;
-  --ctp-crust: 0 0% 91%;
-
-  --background: hsl(var(--ctp-base));
-  --foreground: hsl(var(--ctp-text));
-  --card: hsl(0 0% 98% / 0.90);
-  --card-foreground: hsl(var(--ctp-text));
-  --popover: hsl(0 0% 98%);
-  --popover-foreground: hsl(var(--ctp-text));
-  --primary: hsl(0 0% 11%);
-  --primary-foreground: hsl(0 0% 98%);
-  --secondary: hsl(var(--ctp-surface0));
-  --secondary-foreground: hsl(var(--ctp-text));
-  --muted: hsl(var(--ctp-surface0));
-  --muted-foreground: hsl(var(--ctp-subtext0));
-  --accent: hsl(var(--ctp-surface1));
-  --accent-foreground: hsl(var(--ctp-text));
-  --destructive: hsl(0 70% 42%);
-  --border: hsl(0 0% 82% / 0.85);
-  --input: hsl(0 0% 82% / 0.85);
-  --ring: hsl(0 0% 16% / 0.45);
-  --chart-1: hsl(0 0% 18%);
-  --chart-2: hsl(0 0% 30%);
-  --chart-3: hsl(0 0% 42%);
-  --chart-4: hsl(0 0% 54%);
-  --chart-5: hsl(0 0% 66%);
-  --sidebar: hsl(0 0% 92% / 0.88);
-  --sidebar-foreground: hsl(var(--ctp-text));
-  --sidebar-primary: hsl(0 0% 12%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(0 0% 88%);
-  --sidebar-accent-foreground: hsl(var(--ctp-text));
-  --sidebar-border: hsl(0 0% 80% / 0.8);
-  --sidebar-ring: hsl(0 0% 18% / 0.5);
-}
-
-html.dashboard-mono.dark {
-  --ctp-rosewater: 0 0% 82%;
-  --ctp-flamingo: 0 0% 80%;
-  --ctp-pink: 0 0% 78%;
-  --ctp-mauve: 0 0% 76%;
-  --ctp-red: 0 70% 66%;
-  --ctp-maroon: 0 52% 62%;
-  --ctp-peach: 0 0% 70%;
-  --ctp-yellow: 0 0% 72%;
-  --ctp-green: 0 0% 74%;
-  --ctp-teal: 0 0% 68%;
-  --ctp-sky: 0 0% 86%;
-  --ctp-sapphire: 0 0% 64%;
-  --ctp-blue: 0 0% 92%;
-  --ctp-lavender: 0 0% 84%;
-
-  --ctp-text: 0 0% 94%;
-  --ctp-subtext1: 0 0% 80%;
-  --ctp-subtext0: 0 0% 66%;
-  --ctp-overlay2: 0 0% 56%;
-  --ctp-overlay1: 0 0% 48%;
-  --ctp-overlay0: 0 0% 40%;
-  --ctp-surface2: 0 0% 30%;
-  --ctp-surface1: 0 0% 24%;
-  --ctp-surface0: 0 0% 18%;
-  --ctp-base: 0 0% 9%;
-  --ctp-mantle: 0 0% 8%;
-  --ctp-crust: 0 0% 6%;
-
-  --background: hsl(var(--ctp-base));
-  --foreground: hsl(var(--ctp-text));
-  --card: hsl(0 0% 12% / 0.88);
-  --card-foreground: hsl(var(--ctp-text));
-  --popover: hsl(0 0% 13% / 0.96);
-  --popover-foreground: hsl(var(--ctp-text));
-  --primary: hsl(0 0% 92%);
-  --primary-foreground: hsl(0 0% 10%);
-  --secondary: hsl(var(--ctp-surface0));
-  --secondary-foreground: hsl(var(--ctp-text));
-  --muted: hsl(var(--ctp-surface0));
-  --muted-foreground: hsl(var(--ctp-subtext0));
-  --accent: hsl(var(--ctp-surface1));
-  --accent-foreground: hsl(var(--ctp-text));
-  --destructive: hsl(0 70% 64%);
-  --border: hsl(0 0% 34% / 0.72);
-  --input: hsl(0 0% 34% / 0.72);
-  --ring: hsl(0 0% 92% / 0.35);
-  --chart-1: hsl(0 0% 88%);
-  --chart-2: hsl(0 0% 74%);
-  --chart-3: hsl(0 0% 62%);
-  --chart-4: hsl(0 0% 50%);
-  --chart-5: hsl(0 0% 40%);
-  --sidebar: hsl(0 0% 10% / 0.92);
-  --sidebar-foreground: hsl(var(--ctp-text));
-  --sidebar-primary: hsl(0 0% 92%);
-  --sidebar-primary-foreground: hsl(0 0% 10%);
-  --sidebar-accent: hsl(0 0% 18%);
-  --sidebar-accent-foreground: hsl(var(--ctp-text));
-  --sidebar-border: hsl(0 0% 30% / 0.68);
-  --sidebar-ring: hsl(0 0% 92% / 0.45);
-}
-
-html.dashboard-mono body {
-  font-family: var(--font-dashboard), "Segoe UI", sans-serif;
-}
-
-html.dashboard-mono h1,
-html.dashboard-mono h2,
-html.dashboard-mono h3,
-html.dashboard-mono h4,
-html.dashboard-mono h5,
-html.dashboard-mono h6 {
-  font-family: var(--font-dashboard), "Segoe UI", sans-serif;
-  letter-spacing: -0.018em;
-}
-
-html.dashboard-mono .ctp-noise {
-  background-image:
-    radial-gradient(1100px 560px at 14% 6%, hsl(0 0% 100% / 0.26), transparent 58%),
-    radial-gradient(900px 560px at 86% 12%, hsl(0 0% 100% / 0.18), transparent 60%),
-    radial-gradient(900px 620px at 55% 94%, hsl(0 0% 84% / 0.20), transparent 62%),
-    linear-gradient(to bottom, hsl(0 0% 96%), hsl(0 0% 93%));
-}
-
-html.dashboard-mono .ctp-grid {
-  background-image:
-    linear-gradient(hsl(0 0% 78% / 0.33) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(0 0% 78% / 0.33) 1px, transparent 1px);
-}
-
-html.dashboard-mono .ctp-focus:focus-visible {
-  outline-color: hsl(0 0% 14% / 0.7);
-}
-
-html.dashboard-mono.dark .ctp-noise {
-  background-image:
-    radial-gradient(1200px 620px at 10% 6%, hsl(0 0% 100% / 0.08), transparent 60%),
-    radial-gradient(900px 560px at 88% 10%, hsl(0 0% 80% / 0.07), transparent 62%),
-    radial-gradient(1000px 680px at 54% 94%, hsl(0 0% 42% / 0.10), transparent 64%),
-    linear-gradient(to bottom, hsl(0 0% 12%), hsl(0 0% 8%));
-}
-
-html.dashboard-mono.dark .ctp-grid {
-  background-image:
-    linear-gradient(hsl(0 0% 38% / 0.26) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(0 0% 38% / 0.26) 1px, transparent 1px);
-}
-
-html.dashboard-mono.dark .ctp-focus:focus-visible {
-  outline-color: hsl(0 0% 96% / 0.78);
-}
-
-/* ===== SMOOTH THEME TRANSITION ===== */
 html.theme-transition,
 html.theme-transition *,
 html.theme-transition *::before,
 html.theme-transition *::after {
-  transition: background-color 0.3s ease, color 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+  transition:
+    background-color 240ms ease,
+    border-color 240ms ease,
+    color 240ms ease,
+    fill 240ms ease,
+    stroke 240ms ease,
+    box-shadow 240ms ease !important;
 }

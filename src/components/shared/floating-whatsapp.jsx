@@ -10,32 +10,26 @@ export function FloatingWhatsApp() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
 
-  // Ganti dengan nomor WA Anda (gunakan kode negara, tanpa +)
-  const waNumber = '6285179935117'; 
+  const waNumber = '6285179935117';
 
   const handleSend = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
-    
-    // Encode text untuk URL
+
     const encodedMessage = encodeURIComponent(message);
     const url = `https://wa.me/${waNumber}?text=${encodedMessage}`;
-    
-    // Buka di tab baru
+
     window.open(url, '_blank');
-    
-    // Tutup popup & reset pesan setelah dikirim
     setIsOpen(false);
     setMessage('');
   };
 
   return (
     <>
-      {/* Tombol Floating (Selalu Tampil di Pojok Kanan Bawah) */}
       <div className="fixed bottom-6 right-6 z-50">
         <Button
-          onClick={() => setIsOpen(!isOpen)}
-          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl bg-emerald-500 hover:bg-emerald-600 text-white transition-all transform hover:scale-105"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="h-14 w-14 rounded-full border border-white/60 bg-[hsl(var(--ctp-green))] text-white shadow-[0_20px_40px_-24px_hsl(var(--ctp-green)/0.7)] hover:-translate-y-0.5 hover:bg-[hsl(var(--ctp-green)/0.92)]"
           size="icon"
           aria-label="Chat via WhatsApp"
         >
@@ -43,7 +37,6 @@ export function FloatingWhatsApp() {
         </Button>
       </div>
 
-      {/* Pop-up Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -51,45 +44,42 @@ export function FloatingWhatsApp() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-80 sm:w-96 rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base))] shadow-2xl overflow-hidden flex flex-col"
+            className="fixed bottom-24 right-6 z-50 flex w-80 flex-col overflow-hidden rounded-[28px] border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.92)] shadow-[0_24px_56px_-30px_hsl(var(--ctp-sapphire)/0.42)] backdrop-blur-xl sm:w-96"
           >
-            {/* Header / Top Bar Chat */}
-            <div className="bg-emerald-500 p-4 text-white">
+            <div className="bg-[linear-gradient(135deg,hsl(var(--ctp-green)),hsl(var(--ctp-teal)))] p-4 text-white">
               <div className="flex items-center gap-3">
-                <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm">
+                <div className="rounded-full bg-white/20 p-2 backdrop-blur-sm">
                   <MessageCircle className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm">Hubungi Support</h3>
-                  <p className="text-xs text-emerald-50">Biasanya membalas dalam beberapa menit</p>
+                  <h3 className="text-sm font-bold">Hubungi Support</h3>
+                  <p className="text-xs text-white/84">Biasanya membalas dalam beberapa menit</p>
                 </div>
               </div>
             </div>
 
-            {/* Bubble Chat "Bot/Admin" Dummy */}
-            <div className="p-4 bg-[hsl(var(--ctp-mantle)/0.5)]">
-              <div className="w-10/12 rounded-2xl rounded-tl-none bg-[hsl(var(--ctp-surface0))] p-3 text-sm text-[hsl(var(--ctp-text))] shadow-sm border border-[hsl(var(--ctp-surface1))]">
-                Halo! 👋 Ada yang bisa kami bantu seputar Kavanahub?
+            <div className="bg-[hsl(var(--ctp-mantle)/0.5)] p-4">
+              <div className="w-10/12 rounded-2xl rounded-tl-none border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-surface0))] p-3 text-sm text-[hsl(var(--ctp-text))] shadow-sm">
+                Halo! Ada yang bisa kami bantu seputar Kavanahub?
               </div>
             </div>
 
-            {/* Form Input Pesan */}
-            <div className="p-3 bg-[hsl(var(--ctp-base))] border-t border-[hsl(var(--ctp-surface1))]">
+            <div className="border-t border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base))] p-3">
               <form onSubmit={handleSend} className="flex gap-2">
                 <Input
-                  className="rounded-full shadow-inner-sm bg-[hsl(var(--ctp-crust))] focus-visible:ring-emerald-500"
+                  className="rounded-full bg-[hsl(var(--ctp-crust))] focus-visible:ring-[hsl(var(--ctp-green)/0.35)]"
                   placeholder="Ketik pesan Anda..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   autoFocus
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={!message.trim()}
-                  className="h-10 w-10 shrink-0 rounded-full bg-emerald-500 hover:bg-emerald-600 shadow-sm disabled:opacity-50"
+                  className="h-10 w-10 shrink-0 rounded-full bg-[hsl(var(--ctp-green))] shadow-sm hover:bg-[hsl(var(--ctp-green)/0.92)] disabled:opacity-50"
                   size="icon"
                 >
-                  <Send className="h-4 w-4 -ml-0.5 mt-0.5 text-white" />
+                  <Send className="mt-0.5 h-4 w-4 -ml-0.5 text-white" />
                 </Button>
               </form>
             </div>

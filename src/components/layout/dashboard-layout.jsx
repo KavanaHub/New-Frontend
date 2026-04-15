@@ -83,7 +83,7 @@ function useFormattedDate() {
   );
 }
 
-const iconBtnCls = "ctp-focus h-9 w-9 rounded-xl border border-[hsl(var(--ctp-surface2))] bg-[hsl(var(--ctp-surface0))] hover:bg-[hsl(var(--ctp-surface1))] transition-colors";
+const iconBtnCls = "ctp-focus h-10 w-10 rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.82)] shadow-[0_1px_0_hsl(0_0%_100%/0.45)_inset] transition-colors hover:bg-[hsl(var(--ctp-crust))]";
 
 function useIsHydrated() {
   return useSyncExternalStore(
@@ -199,16 +199,16 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
   return (
     <AuthGuard allowedRoles={allowedRoles}>
       <TooltipProvider delayDuration={300}>
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen bg-transparent">
           {/* Desktop Sidebar */}
           <DesktopSidebar role={currentRole} />
 
           {/* Main Content */}
-          <main className="flex-1">
+          <main className="flex-1 pb-10">
             {/* Top Navbar */}
-            <header className="sticky top-0 z-20 px-4 lg:px-5 pt-3 lg:pt-4">
-              <div className="rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust))] shadow-sm backdrop-blur-lg">
-                <div className="flex items-center gap-3 px-4 py-2.5">
+            <header className="sticky top-0 z-20 px-4 pt-4 lg:px-6 lg:pt-5">
+              <div className="soft-panel rounded-[30px] px-4 py-3 sm:px-5">
+                <div className="flex items-center gap-3">
                   {/* Mobile hamburger */}
                   <div className="lg:hidden">
                     <MobileSidebar role={currentRole} />
@@ -216,14 +216,19 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
 
                   {/* Page title + date */}
                   <div className="min-w-0 flex-1">
-                    <div className="text-[11px] uppercase tracking-wider text-[hsl(var(--ctp-subtext0))]">{ROLE_LABEL[currentRole] || 'Dashboard'}</div>
-                    <div className="truncate text-base font-semibold tracking-tight text-[hsl(var(--ctp-text))]">{pageTitle}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--ctp-subtext0))]">
+                      {ROLE_LABEL[currentRole] || 'Dashboard'}
+                    </div>
+                    <div className="truncate text-lg font-black tracking-tight text-[hsl(var(--ctp-text))]">{pageTitle}</div>
+                    <div className="hidden text-sm text-[hsl(var(--ctp-subtext0))] md:block">
+                      Fokus pada pekerjaan yang masih menunggu tindak lanjut hari ini.
+                    </div>
                   </div>
 
                   {/* Date (desktop) */}
                   {isHydrated && todayDate && (
-                    <div className="hidden xl:flex items-center gap-1.5 text-xs text-[hsl(var(--ctp-subtext0))] mr-1">
-                      <CalendarDays className="h-3.5 w-3.5" />
+                    <div className="mr-1 hidden items-center gap-2 rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.72)] px-3 py-2 text-xs text-[hsl(var(--ctp-subtext0))] xl:flex">
+                      <CalendarDays className="h-3.5 w-3.5 text-[hsl(var(--ctp-blue))]" />
                       {todayDate}
                     </div>
                   )}
@@ -243,7 +248,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
                           <ThemeIcon className="h-4 w-4 text-[hsl(var(--ctp-subtext1))]" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent className="rounded-xl border-[hsl(var(--ctp-overlay0)/0.35)] bg-[hsl(var(--ctp-surface0))] text-[hsl(var(--ctp-text))]">
+                      <TooltipContent className="rounded-2xl border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.96)] text-[hsl(var(--ctp-text))]">
                         <p className="text-xs">Tema: {themeLabel}</p>
                       </TooltipContent>
                     </Tooltip>
@@ -264,7 +269,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
                           }
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent className="rounded-xl border-[hsl(var(--ctp-overlay0)/0.35)] bg-[hsl(var(--ctp-surface0))] text-[hsl(var(--ctp-text))]">
+                      <TooltipContent className="rounded-2xl border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.96)] text-[hsl(var(--ctp-text))]">
                         <p className="text-xs">{isFull ? 'Exit Fullscreen' : 'Fullscreen'}</p>
                       </TooltipContent>
                     </Tooltip>
@@ -288,7 +293,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="end"
-                        className="w-80 rounded-xl border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust))] backdrop-blur-lg p-1 shadow-lg"
+                        className="w-80 rounded-[24px] border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.96)] p-1 shadow-[0_24px_50px_-34px_hsl(var(--ctp-sapphire)/0.38)] backdrop-blur-xl"
                       >
                         <DropdownMenuLabel className="px-3 py-2 flex items-center justify-between">
                           <span className="text-sm font-semibold text-[hsl(var(--ctp-text))]">Notifikasi</span>
@@ -341,7 +346,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          className="ctp-focus h-9 rounded-xl border border-[hsl(var(--ctp-surface2))] bg-[hsl(var(--ctp-surface0))] hover:bg-[hsl(var(--ctp-surface1))] pl-1.5 pr-2 gap-1.5"
+                          className="ctp-focus h-10 gap-2 rounded-2xl border border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.82)] pl-1.5 pr-2 shadow-[0_1px_0_hsl(0_0%_100%/0.45)_inset] hover:bg-[hsl(var(--ctp-crust))]"
                         >
                           <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-[hsl(var(--ctp-lavender)/0.25)] border border-[hsl(var(--ctp-lavender)/0.40)] text-[10px] font-bold text-[hsl(var(--ctp-text))]">
                             {initials}
@@ -350,7 +355,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
                           <ChevronDown className="h-3.5 w-3.5 text-[hsl(var(--ctp-overlay1))]" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-52 rounded-xl border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-crust))] backdrop-blur-lg p-1 shadow-lg">
+                      <DropdownMenuContent align="end" className="w-52 rounded-[24px] border-[hsl(var(--ctp-surface1))] bg-[hsl(var(--ctp-base)/0.96)] p-1 shadow-[0_24px_50px_-34px_hsl(var(--ctp-sapphire)/0.38)] backdrop-blur-xl">
                         <DropdownMenuLabel className="px-3 py-2">
                           <p className="text-sm font-semibold text-[hsl(var(--ctp-text))]">{displayName}</p>
                           <p className="text-xs text-[hsl(var(--ctp-subtext0))]">{ROLE_LABEL[currentRole] || 'User'}</p>
@@ -383,7 +388,7 @@ export function DashboardLayout({ children, allowedRoles = [] }) {
             </header>
 
             {/* Page Content */}
-            <div className="px-4 lg:px-5 pb-10 pt-5">
+            <div className="px-4 pt-5 lg:px-6">
               {children}
             </div>
           </main>
